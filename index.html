@@ -228,12 +228,6 @@
             opacity: 0.9;
         }
 
-        .btn-secondary {
-            background: #1e1e2a;
-            border: 1px solid #a855f7;
-            margin-top: 10px;
-        }
-
         .btn-danger {
             background: #dc2626;
         }
@@ -465,10 +459,6 @@
             border: 1px solid #2a2a3a;
         }
 
-        .prefix-item:active {
-            background: #2a2a3a;
-        }
-
         .gift-card {
             text-align: center;
             padding: 20px 16px;
@@ -658,394 +648,399 @@
     </div>
 
     <script>
-        // ТВОИ ДАННЫЕ
-        const SUPABASE_URL = 'https://aoogkjqdsbozaeblxloc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvb2dranFkc2JvemFlYmx4bG9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjY5MTEsImV4cCI6MjA4OTcwMjkxMX0.w8Jm5AS8aW3yjD6Uw8iGSnlHYQQU-BCpfSqIdowhA2Y';
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const tg = window.Telegram.WebApp;
-        
-        let user = null;
-        const ADMIN_ID = 8155919358;
-        let selectedBank = 'Сбер';
-        
-        // Курсы
-        function getRate(amount) {
-            if (amount < 7) return 76;
-            if (amount < 20) return 76;
-            if (amount < 50) return 77;
-            if (amount < 100) return 78;
-            return 79;
-        }
-        
-        function calculateRub() {
-            let usd = parseFloat(document.getElementById('usdInput').value) || 0;
-            const rate = getRate(usd);
-            const rub = Math.floor(usd * rate);
-            document.getElementById('rubResult').innerText = `${rub} ₽`;
-            return { usd, rub, rate };
-        }
-        
-        function generateCode() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 8; i++) {
-                code += chars[Math.floor(Math.random() * chars.length)];
-            }
-            return code;
-        }
-        
-        function showToast(msg, isError = false) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.style.background = isError ? '#dc2626' : '#10b981';
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-        
-        // Создание заявки
-        async function createOrder() {
-            if (!user) {
-                showToast('Ошибка авторизации', true);
-                return;
+        (function() {
+            // Данные Supabase
+            const SUPABASE_URL = 'https://aoogkjqdsbozaeblxloc.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvb2dranFkc2JvemFlYmx4bG9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjY5MTEsImV4cCI6MjA4OTcwMjkxMX0.w8Jm5AS8aW3yjD6Uw8iGSnlHYQQU-BCpfSqIdowhA2Y';
+            
+            const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const tg = window.Telegram.WebApp;
+            
+            let currentUser = null;
+            const ADMIN_ID = 8155919358;
+            let selectedBank = 'Сбер';
+            
+            // Курсы
+            function getRate(amount) {
+                if (amount < 7) return 76;
+                if (amount < 20) return 76;
+                if (amount < 50) return 77;
+                if (amount < 100) return 78;
+                return 79;
             }
             
-            const { usd, rub, rate } = calculateRub();
-            
-            if (usd < 7) {
-                showToast('Минимальная сумма: 7 USDT', true);
-                return;
+            function calculateRub() {
+                let usd = parseFloat(document.getElementById('usdInput').value) || 0;
+                const rate = getRate(usd);
+                const rub = Math.floor(usd * rate);
+                document.getElementById('rubResult').innerText = `${rub} ₽`;
+                return { usd, rub, rate };
             }
             
-            const phone = document.getElementById('phoneInput').value.trim();
-            if (!phone) {
-                showToast('Введите номер телефона', true);
-                return;
+            function generateCode() {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+                let code = '';
+                for (let i = 0; i < 8; i++) {
+                    code += chars[Math.floor(Math.random() * chars.length)];
+                }
+                return code;
             }
             
-            const secretCode = generateCode();
-            
-            const { data, error } = await supabase
-                .from('exchange_requests')
-                .insert([{
-                    user_id: user.id,
-                    username: user.username || user.first_name || 'User',
-                    amount_usd: usd,
-                    amount_rub: rub,
-                    rate: rate,
-                    phone: phone,
-                    bank: selectedBank,
-                    secret_code: secretCode,
-                    status: 'pending'
-                }])
-                .select();
-            
-            if (error) {
-                console.error('Create error:', error);
-                showToast('Ошибка: ' + error.message, true);
-                return;
+            function showToast(msg, isError = false) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.style.background = isError ? '#dc2626' : '#10b981';
+                toast.innerText = msg;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             }
             
-            // Показываем модалку с кодом
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <i class="fas fa-check-circle" style="font-size: 40px; color: #10b981;"></i>
-                    <h3 style="margin: 12px 0;">Заявка создана!</h3>
-                    <p>${usd} USDT → ${rub} ₽</p>
-                    <div class="secret-code">${secretCode}</div>
-                    <p style="font-size: 12px;">Ваш уникальный код</p>
-                    <div style="background: #0a0a14; padding: 12px; border-radius: 12px; margin: 12px 0; text-align: left;">
-                        <p style="font-size: 11px; color: #f59e0b;">📝 Инструкция:</p>
-                        <p style="font-size: 12px;">1. Перейдите по ссылке:</p>
-                        <p style="font-size: 11px; color: #c084fc; word-break: break-all;">t.me/send?start=IVbPoRLGan1F</p>
-                        <p style="font-size: 12px; margin-top: 8px;">2. Отправьте сообщение:</p>
-                        <p style="font-size: 11px; background: #000; padding: 8px; border-radius: 8px; margin-top: 4px;">
-                            Сумма: ${rub} ₽<br>
-                            Код: ${secretCode}
-                        </p>
-                        <p style="font-size: 10px; color: #f59e0b; margin-top: 8px;">⚠️ Без указания кода оплата не будет засчитана!</p>
+            // Создание заявки
+            async function createOrder() {
+                if (!currentUser) {
+                    showToast('Ошибка авторизации', true);
+                    return;
+                }
+                
+                const { usd, rub, rate } = calculateRub();
+                
+                if (usd < 7) {
+                    showToast('Минимальная сумма: 7 USDT', true);
+                    return;
+                }
+                
+                const phone = document.getElementById('phoneInput').value.trim();
+                if (!phone) {
+                    showToast('Введите номер телефона', true);
+                    return;
+                }
+                
+                const secretCode = generateCode();
+                
+                const { data, error } = await supabaseClient
+                    .from('exchange_requests')
+                    .insert([{
+                        user_id: currentUser.id,
+                        username: currentUser.username || currentUser.first_name || 'User',
+                        amount_usd: usd,
+                        amount_rub: rub,
+                        rate: rate,
+                        phone: phone,
+                        bank: selectedBank,
+                        secret_code: secretCode,
+                        status: 'pending'
+                    }])
+                    .select();
+                
+                if (error) {
+                    console.error('Create error:', error);
+                    showToast('Ошибка: ' + error.message, true);
+                    return;
+                }
+                
+                // Показываем модалку
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <i class="fas fa-check-circle" style="font-size: 40px; color: #10b981;"></i>
+                        <h3 style="margin: 12px 0;">Заявка создана!</h3>
+                        <p>${usd} USDT → ${rub} ₽</p>
+                        <div class="secret-code">${secretCode}</div>
+                        <p style="font-size: 12px;">Ваш уникальный код</p>
+                        <div style="background: #0a0a14; padding: 12px; border-radius: 12px; margin: 12px 0; text-align: left;">
+                            <p style="font-size: 11px; color: #f59e0b;">📝 Инструкция:</p>
+                            <p style="font-size: 12px;">1. Перейдите по ссылке:</p>
+                            <p style="font-size: 11px; color: #c084fc; word-break: break-all;">t.me/send?start=IVbPoRLGan1F</p>
+                            <p style="font-size: 12px; margin-top: 8px;">2. Отправьте сообщение:</p>
+                            <p style="font-size: 11px; background: #000; padding: 8px; border-radius: 8px; margin-top: 4px;">
+                                Сумма: ${rub} ₽<br>
+                                Код: ${secretCode}
+                            </p>
+                            <p style="font-size: 10px; color: #f59e0b; margin-top: 8px;">⚠️ Без указания кода оплата не будет засчитана!</p>
+                        </div>
+                        <button class="btn" id="closeModalBtn" style="margin-top: 8px;">Понятно</button>
                     </div>
-                    <button class="btn" id="closeModalBtn" style="margin-top: 8px;">Понятно</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.getElementById('closeModalBtn').onclick = () => modal.remove();
-            
-            showToast('Заявка создана! Код: ' + secretCode);
-            loadMyOrders();
-            
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        }
-        
-        // Загрузка моих заявок
-        async function loadMyOrders() {
-            if (!user) return;
-            
-            const { data, error } = await supabase
-                .from('exchange_requests')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
-            
-            const container = document.getElementById('myOrdersList');
-            if (!container) return;
-            
-            if (error) {
-                container.innerHTML = '<div class="info-text">Ошибка загрузки</div>';
-                return;
+                `;
+                document.body.appendChild(modal);
+                document.getElementById('closeModalBtn').onclick = () => modal.remove();
+                
+                showToast('Заявка создана! Код: ' + secretCode);
+                loadMyOrders();
+                
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
             
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="info-text">У вас пока нет заявок</div>';
-                return;
+            // Загрузка моих заявок
+            async function loadMyOrders() {
+                if (!currentUser) return;
+                
+                const { data, error } = await supabaseClient
+                    .from('exchange_requests')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+                
+                const container = document.getElementById('myOrdersList');
+                if (!container) return;
+                
+                if (error) {
+                    container.innerHTML = '<div class="info-text">Ошибка загрузки</div>';
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="info-text">У вас пока нет заявок</div>';
+                    return;
+                }
+                
+                const statusText = {
+                    pending: '🟡 Ожидает оплаты',
+                    paid: '🔵 Оплачено',
+                    completed: '🟢 Завершено',
+                    cancelled: '🔴 Отменено'
+                };
+                
+                container.innerHTML = data.map(order => `
+                    <div class="admin-request ${order.status}">
+                        <div class="request-header">
+                            <span class="request-id">#${order.id.slice(0, 8)}</span>
+                            <span class="request-status ${order.status}">${statusText[order.status]}</span>
+                        </div>
+                        <div class="request-details">
+                            ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
+                            Код: ${order.secret_code}
+                        </div>
+                    </div>
+                `).join('');
             }
             
-            const statusText = {
-                pending: '🟡 Ожидает оплаты',
-                paid: '🔵 Оплачено',
-                completed: '🟢 Завершено',
-                cancelled: '🔴 Отменено'
+            // Загрузка админских заявок
+            async function loadAdminOrders() {
+                if (!currentUser || currentUser.id !== ADMIN_ID) return;
+                
+                const { data, error } = await supabaseClient
+                    .from('exchange_requests')
+                    .select('*')
+                    .in('status', ['pending', 'paid'])
+                    .order('created_at', { ascending: false });
+                
+                const container = document.getElementById('adminOrdersList');
+                if (!container) return;
+                
+                if (error) {
+                    container.innerHTML = '<div class="info-text">Ошибка загрузки</div>';
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="info-text">Нет активных заявок</div>';
+                    return;
+                }
+                
+                const statusText = { pending: '🟡 Ожидает', paid: '🔵 Оплачено' };
+                
+                container.innerHTML = data.map(order => `
+                    <div class="admin-request ${order.status}">
+                        <div class="request-header">
+                            <span class="request-id">#${order.id.slice(0, 8)}</span>
+                            <span class="request-status ${order.status}">${statusText[order.status]}</span>
+                        </div>
+                        <div class="request-details">
+                            <strong>${order.username}</strong> (${order.user_id})<br>
+                            ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
+                            📞 ${order.phone}<br>
+                            🏦 ${order.bank}<br>
+                            🔑 <strong style="color:#c084fc">${order.secret_code}</strong>
+                        </div>
+                        <div class="request-actions">
+                            ${order.status === 'pending' ? `
+                                <button class="small-btn btn-success" onclick="window.markPaid('${order.id}')">✅ Оплачено</button>
+                                <button class="small-btn btn-danger" onclick="window.cancelOrder('${order.id}')">❌ Отмена</button>
+                            ` : ''}
+                            ${order.status === 'paid' ? `
+                                <button class="small-btn btn-success" onclick="window.completeOrder('${order.id}')">✅ Завершить</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Префиксы
+            const prefixes = [
+                { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
+                { name: '@duba_t', desc: 'скупает Макс (объём)' }
+            ];
+            
+            function loadPrefixes() {
+                const container = document.getElementById('prefixList');
+                if (!container) return;
+                container.innerHTML = prefixes.map(p => `
+                    <div class="prefix-item" onclick="window.open('https://t.me/${p.name.replace('@', '')}', '_blank')">
+                        <i class="fas fa-at"></i>
+                        <div class="prefix-info">
+                            <div class="prefix-name">${p.name}</div>
+                            <div class="prefix-desc">${p.desc}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Навигация
+            function setupNav() {
+                const setActive = (panel) => {
+                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    
+                    const panelId = `panel${panel.charAt(0).toUpperCase() + panel.slice(1)}`;
+                    const navId = `nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`;
+                    
+                    const panelEl = document.getElementById(panelId);
+                    const navEl = document.getElementById(navId);
+                    
+                    if (panelEl) panelEl.classList.add('active');
+                    if (navEl) navEl.classList.add('active');
+                    
+                    if (panel === 'myOrders') loadMyOrders();
+                    if (panel === 'admin' && currentUser?.id === ADMIN_ID) loadAdminOrders();
+                    
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                };
+                
+                document.getElementById('navExchange').onclick = () => setActive('exchange');
+                document.getElementById('navMyOrders').onclick = () => setActive('myOrders');
+                document.getElementById('navPrefixes').onclick = () => setActive('prefixes');
+                document.getElementById('navGift').onclick = () => setActive('gift');
+                document.getElementById('navRules').onclick = () => setActive('rules');
+                
+                // Добавляем админку если нужно
+                if (currentUser && currentUser.id === ADMIN_ID) {
+                    const nav = document.querySelector('.bottom-nav');
+                    const adminBtn = document.createElement('button');
+                    adminBtn.className = 'nav-btn';
+                    adminBtn.id = 'navAdmin';
+                    adminBtn.innerHTML = '<i class="fas fa-crown"></i><span>Админ</span>';
+                    nav.appendChild(adminBtn);
+                    document.getElementById('navAdmin').onclick = () => setActive('admin');
+                }
+                
+                window.setActive = setActive;
+            }
+            
+            // Инициализация
+            async function init() {
+                // Получаем пользователя
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    currentUser = tg.initDataUnsafe.user;
+                } else {
+                    // Для теста
+                    currentUser = { id: 123456789, username: 'test_user', first_name: 'Test' };
+                }
+                
+                console.log('User:', currentUser);
+                
+                // Регистрируем в users
+                try {
+                    await supabaseClient
+                        .from('users')
+                        .upsert({
+                            telegram_id: currentUser.id,
+                            username: currentUser.username || currentUser.first_name,
+                            first_name: currentUser.first_name,
+                            last_seen: new Date().toISOString()
+                        });
+                } catch(e) {
+                    console.log('User upsert error:', e);
+                }
+                
+                // Настройка банков
+                document.querySelectorAll('.bank-option').forEach(opt => {
+                    opt.onclick = () => {
+                        document.querySelectorAll('.bank-option').forEach(o => o.classList.remove('selected'));
+                        opt.classList.add('selected');
+                        selectedBank = opt.dataset.bank;
+                    };
+                    if (opt.dataset.bank === 'Сбер') opt.classList.add('selected');
+                });
+                
+                document.getElementById('usdInput').addEventListener('input', calculateRub);
+                document.getElementById('createOrderBtn').onclick = createOrder;
+                
+                loadPrefixes();
+                setupNav();
+                
+                // Убираем сплеш
+                const splash = document.getElementById('splash');
+                const main = document.getElementById('main');
+                const progress = document.getElementById('loadProgress');
+                
+                let p = 0;
+                const interval = setInterval(() => {
+                    p += 15;
+                    if (p >= 100) {
+                        p = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            splash.style.opacity = '0';
+                            setTimeout(() => {
+                                splash.style.display = 'none';
+                                main.style.display = 'block';
+                                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                            }, 300);
+                        }, 200);
+                    }
+                    progress.style.width = Math.min(p, 100) + '%';
+                }, 50);
+            }
+            
+            // Админ функции (глобальные)
+            window.markPaid = async (id) => {
+                const { error } = await supabaseClient
+                    .from('exchange_requests')
+                    .update({ status: 'paid', paid_at: new Date().toISOString() })
+                    .eq('id', id);
+                
+                if (error) showToast('Ошибка', true);
+                else {
+                    showToast('Отмечено как оплачено');
+                    loadAdminOrders();
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                }
             };
             
-            container.innerHTML = data.map(order => `
-                <div class="admin-request ${order.status}">
-                    <div class="request-header">
-                        <span class="request-id">#${order.id.slice(0, 8)}</span>
-                        <span class="request-status ${order.status}">${statusText[order.status]}</span>
-                    </div>
-                    <div class="request-details">
-                        ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
-                        Код: ${order.secret_code}
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Загрузка админских заявок
-        async function loadAdminOrders() {
-            if (!user || user.id !== ADMIN_ID) return;
-            
-            const { data, error } = await supabase
-                .from('exchange_requests')
-                .select('*')
-                .in('status', ['pending', 'paid'])
-                .order('created_at', { ascending: false });
-            
-            const container = document.getElementById('adminOrdersList');
-            if (!container) return;
-            
-            if (error) {
-                container.innerHTML = '<div class="info-text">Ошибка загрузки</div>';
-                return;
-            }
-            
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет активных заявок</div>';
-                return;
-            }
-            
-            const statusText = { pending: '🟡 Ожидает', paid: '🔵 Оплачено' };
-            
-            container.innerHTML = data.map(order => `
-                <div class="admin-request ${order.status}">
-                    <div class="request-header">
-                        <span class="request-id">#${order.id.slice(0, 8)}</span>
-                        <span class="request-status ${order.status}">${statusText[order.status]}</span>
-                    </div>
-                    <div class="request-details">
-                        <strong>${order.username}</strong> (${order.user_id})<br>
-                        ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
-                        📞 ${order.phone}<br>
-                        🏦 ${order.bank}<br>
-                        🔑 <strong style="color:#c084fc">${order.secret_code}</strong>
-                    </div>
-                    <div class="request-actions">
-                        ${order.status === 'pending' ? `
-                            <button class="small-btn btn-success" onclick="markPaid('${order.id}')">✅ Оплачено</button>
-                            <button class="small-btn btn-danger" onclick="cancelOrder('${order.id}')">❌ Отмена</button>
-                        ` : ''}
-                        ${order.status === 'paid' ? `
-                            <button class="small-btn btn-success" onclick="completeOrder('${order.id}')">✅ Завершить</button>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Админ функции (глобальные)
-        window.markPaid = async (id) => {
-            const { error } = await supabase
-                .from('exchange_requests')
-                .update({ status: 'paid', paid_at: new Date().toISOString() })
-                .eq('id', id);
-            
-            if (error) showToast('Ошибка', true);
-            else {
-                showToast('Отмечено как оплачено');
-                loadAdminOrders();
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        };
-        
-        window.completeOrder = async (id) => {
-            const { error } = await supabase
-                .from('exchange_requests')
-                .update({ status: 'completed' })
-                .eq('id', id);
-            
-            if (error) showToast('Ошибка', true);
-            else {
-                showToast('Обмен завершен');
-                loadAdminOrders();
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        };
-        
-        window.cancelOrder = async (id) => {
-            const { error } = await supabase
-                .from('exchange_requests')
-                .update({ status: 'cancelled' })
-                .eq('id', id);
-            
-            if (error) showToast('Ошибка', true);
-            else {
-                showToast('Заявка отменена');
-                loadAdminOrders();
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-            }
-        };
-        
-        // Префиксы
-        const prefixes = [
-            { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
-            { name: '@duba_t', desc: 'скупает Макс (объём)' }
-        ];
-        
-        function loadPrefixes() {
-            const container = document.getElementById('prefixList');
-            if (!container) return;
-            container.innerHTML = prefixes.map(p => `
-                <div class="prefix-item" onclick="window.open('https://t.me/${p.name.replace('@', '')}', '_blank')">
-                    <i class="fas fa-at"></i>
-                    <div class="prefix-info">
-                        <div class="prefix-name">${p.name}</div>
-                        <div class="prefix-desc">${p.desc}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Навигация
-        function setupNav() {
-            const panels = ['exchange', 'myOrders', 'prefixes', 'gift', 'rules'];
-            
-            // Добавляем админку если нужно
-            if (user && user.id === ADMIN_ID) {
-                panels.push('admin');
-                const nav = document.querySelector('.bottom-nav');
-                const adminBtn = document.createElement('button');
-                adminBtn.className = 'nav-btn';
-                adminBtn.id = 'navAdmin';
-                adminBtn.innerHTML = '<i class="fas fa-crown"></i><span>Админ</span>';
-                nav.appendChild(adminBtn);
-                document.getElementById('navAdmin').onclick = () => setActive('admin');
-            }
-            
-            function setActive(panel) {
-                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            window.completeOrder = async (id) => {
+                const { error } = await supabaseClient
+                    .from('exchange_requests')
+                    .update({ status: 'completed' })
+                    .eq('id', id);
                 
-                document.getElementById(`panel${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
-                document.getElementById(`nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
-                
-                if (panel === 'myOrders') loadMyOrders();
-                if (panel === 'admin' && user?.id === ADMIN_ID) loadAdminOrders();
-                
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            }
-            
-            document.getElementById('navExchange').onclick = () => setActive('exchange');
-            document.getElementById('navMyOrders').onclick = () => setActive('myOrders');
-            document.getElementById('navPrefixes').onclick = () => setActive('prefixes');
-            document.getElementById('navGift').onclick = () => setActive('gift');
-            document.getElementById('navRules').onclick = () => setActive('rules');
-            
-            window.setActive = setActive;
-        }
-        
-        // Инициализация
-        async function init() {
-            // Получаем пользователя
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                user = tg.initDataUnsafe.user;
-            } else {
-                // Для теста
-                user = { id: 123456789, username: 'test_user', first_name: 'Test' };
-            }
-            
-            console.log('User:', user);
-            
-            // Регистрируем в users
-            try {
-                await supabase
-                    .from('users')
-                    .upsert({
-                        telegram_id: user.id,
-                        username: user.username || user.first_name,
-                        first_name: user.first_name,
-                        last_seen: new Date().toISOString()
-                    }, { onConflict: 'telegram_id' });
-            } catch(e) {
-                console.log('User upsert error:', e);
-            }
-            
-            // Настройка банков
-            document.querySelectorAll('.bank-option').forEach(opt => {
-                opt.onclick = () => {
-                    document.querySelectorAll('.bank-option').forEach(o => o.classList.remove('selected'));
-                    opt.classList.add('selected');
-                    selectedBank = opt.dataset.bank;
-                };
-                if (opt.dataset.bank === 'Сбер') opt.classList.add('selected');
-            });
-            
-            document.getElementById('usdInput').addEventListener('input', calculateRub);
-            document.getElementById('createOrderBtn').onclick = createOrder;
-            
-            loadPrefixes();
-            setupNav();
-            
-            // Убираем сплеш
-            const splash = document.getElementById('splash');
-            const main = document.getElementById('main');
-            const progress = document.getElementById('loadProgress');
-            
-            let p = 0;
-            const interval = setInterval(() => {
-                p += 15;
-                if (p >= 100) {
-                    p = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        splash.style.opacity = '0';
-                        setTimeout(() => {
-                            splash.style.display = 'none';
-                            main.style.display = 'block';
-                            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                        }, 300);
-                    }, 200);
+                if (error) showToast('Ошибка', true);
+                else {
+                    showToast('Обмен завершен');
+                    loadAdminOrders();
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
-                progress.style.width = Math.min(p, 100) + '%';
-            }, 50);
-        }
-        
-        // Запуск
-        tg.expand();
-        tg.enableClosingConfirmation();
-        init();
+            };
+            
+            window.cancelOrder = async (id) => {
+                const { error } = await supabaseClient
+                    .from('exchange_requests')
+                    .update({ status: 'cancelled' })
+                    .eq('id', id);
+                
+                if (error) showToast('Ошибка', true);
+                else {
+                    showToast('Заявка отменена');
+                    loadAdminOrders();
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+                }
+            };
+            
+            // Запуск
+            tg.expand();
+            tg.enableClosingConfirmation();
+            init();
+        })();
     </script>
 </body>
 </html>
