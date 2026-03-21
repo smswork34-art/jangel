@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Jangel 3.1 | Обмен</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -242,8 +242,12 @@
             background: #2a2a3a;
         }
 
-        .single-button {
-            margin-top: 10px;
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: #10b981;
         }
 
         .info-text {
@@ -254,20 +258,6 @@
             padding: 6px;
             background: rgba(168, 85, 247, 0.1);
             border-radius: 10px;
-        }
-
-        .reputation-block {
-            text-align: center;
-            margin-top: 10px;
-            padding: 6px;
-            background: rgba(168, 85, 247, 0.1);
-            border-radius: 10px;
-        }
-
-        .reputation-block span {
-            color: #c084fc;
-            font-weight: 700;
-            font-size: 12px;
         }
 
         .calculator {
@@ -320,149 +310,172 @@
             color: #c084fc;
         }
 
-        .calc-hint {
-            font-size: 10px;
-            color: #666;
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #0a0a14;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #a855f7;
+        }
+
+        .bank-select {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .bank-option {
+            background: #0a0a14;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            padding: 10px;
             text-align: center;
-            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .prefix-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .bank-option.selected {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+            color: #c084fc;
         }
 
-        .prefix-item {
+        .bank-option:active {
+            transform: scale(0.96);
+        }
+
+        .admin-request {
             background: #1e1e2a;
             border-radius: 12px;
             padding: 12px;
+            margin-bottom: 12px;
+            border-left: 3px solid #a855f7;
+        }
+
+        .admin-request.paid {
+            border-left-color: #10b981;
+        }
+
+        .admin-request.completed {
+            border-left-color: #10b981;
+            opacity: 0.7;
+        }
+
+        .admin-request.cancelled {
+            border-left-color: #dc2626;
+            opacity: 0.5;
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .request-id {
+            color: #c084fc;
+            font-weight: 600;
+        }
+
+        .request-status {
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #2a2a3a;
+            font-size: 10px;
+        }
+
+        .request-status.pending { background: #f59e0b; color: #000; }
+        .request-status.paid { background: #3b82f6; }
+        .request-status.completed { background: #10b981; }
+        .request-status.cancelled { background: #dc2626; }
+
+        .request-details {
+            font-size: 12px;
+            margin: 8px 0;
+            color: #aaa;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .small-btn {
+            flex: 1;
+            padding: 6px;
+            border-radius: 8px;
+            border: none;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1e2a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 13px;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            border: 1px solid #2a2a3a;
+            justify-content: center;
+            z-index: 1001;
+            padding: 20px;
         }
 
-        .prefix-item:active {
-            background: #2a2a3a;
-        }
-
-        .prefix-item i {
-            color: #a855f7;
-            font-size: 18px;
-            width: 28px;
-        }
-
-        .prefix-info {
-            flex: 1;
-        }
-
-        .prefix-name {
-            font-size: 14px;
-            font-weight: 600;
-            font-family: monospace;
-            margin-bottom: 4px;
-        }
-
-        .prefix-desc {
-            font-size: 11px;
-            color: #888;
-        }
-
-        .gift-card {
+        .modal-content {
+            background: #12121c;
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 300px;
+            width: 100%;
             text-align: center;
-            padding: 20px 16px;
         }
 
-        .gift-icon {
-            font-size: 55px;
-            margin-bottom: 16px;
-        }
-
-        .gift-title {
+        .secret-code {
+            background: #0a0a14;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 20px;
             font-weight: 700;
+            letter-spacing: 2px;
+            margin: 12px 0;
             color: #c084fc;
-            margin-bottom: 12px;
-        }
-
-        .bear-icon {
-            font-size: 40px;
-            margin: 10px 0;
-        }
-
-        .gift-text {
-            font-size: 13px;
-            color: #aaa;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        .chat-list {
-            background: #1e1e2a;
-            border-radius: 14px;
-            padding: 12px;
-            margin: 16px 0;
-            text-align: left;
-        }
-
-        .chat-list span {
-            display: inline-block;
-            background: #a855f7;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin: 4px;
-        }
-
-        /* Стили для правил */
-        .rules-content {
-            font-size: 12px;
-            line-height: 1.5;
-            color: #ccc;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 6px;
-        }
-
-        .rules-section {
-            margin-bottom: 16px;
-        }
-
-        .rules-section h4 {
-            color: #c084fc;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            margin-top: 12px;
-        }
-
-        .rules-section p {
-            margin-bottom: 8px;
-        }
-
-        .rules-list {
-            padding-left: 20px;
-            margin: 8px 0;
-        }
-
-        .rules-list li {
-            margin-bottom: 6px;
-        }
-
-        .rule-item {
-            margin-bottom: 10px;
-        }
-
-        .punishment {
-            color: #ffb347;
-        }
-
-        hr {
-            border-color: #2a2a3a;
-            margin: 10px 0;
         }
     </style>
 </head>
@@ -489,6 +502,7 @@
             </div>
         </div>
 
+        <!-- Панель обмена -->
         <div id="panelExchange" class="panel active">
             <div class="card">
                 <div class="card-title">
@@ -512,59 +526,81 @@
                     <span class="rate-price">79 ₽</span>
                 </div>
 
-                <div class="card-title" style="margin-top: 12px;">
-                    <i class="fas fa-arrow-up"></i>
-                    Продаю USDT
-                </div>
-                <div class="rate-row">
-                    <span class="rate-amount">от 50$</span>
-                    <span class="rate-price">88+ ₽</span>
-                </div>
-
                 <div class="calculator">
                     <div class="calc-label">
-                        <i class="fas fa-calculator"></i> Калькулятор покупки USDT
+                        <i class="fas fa-calculator"></i> Сумма в USDT
                     </div>
-                    <input type="number" id="usdInput" class="calc-input" placeholder="Введите сумму в $" value="7" step="1">
+                    <input type="number" id="usdInput" class="calc-input" placeholder="Введите сумму в $" value="10" step="1">
                     <div class="calc-result">
-                        <div class="calc-result-label">Вы получите:</div>
-                        <div class="calc-result-value" id="rubResult">532 ₽</div>
+                        <div class="calc-result-label">К оплате (₽):</div>
+                        <div class="calc-result-value" id="rubResult">760 ₽</div>
                     </div>
-                    <div class="calc-hint">Курс зависит от суммы. Чем больше сумма — тем выше курс</div>
                 </div>
 
-                <button class="btn" id="contactBtn">
-                    <i class="fab fa-telegram"></i>
-                    Связаться
-                </button>
-
-                <button class="btn btn-secondary single-button" id="chatServiceBtn">
-                    <i class="fas fa-comments"></i>
-                    Чат услуг
-                </button>
-
-                <div class="reputation-block">
-                    <span>Репутация 4000+</span>
+                <div class="form-group">
+                    <div class="form-label">
+                        <i class="fas fa-phone"></i> Номер телефона (СБП)
+                    </div>
+                    <input type="tel" id="phoneInput" class="form-input" placeholder="+7 XXX XXX XX XX">
                 </div>
+
+                <div class="form-group">
+                    <div class="form-label">
+                        <i class="fas fa-university"></i> Банк получателя
+                    </div>
+                    <div class="bank-select" id="bankSelect">
+                        <div class="bank-option" data-bank="Сбер">Сбер</div>
+                        <div class="bank-option" data-bank="Альфа">Альфа</div>
+                        <div class="bank-option" data-bank="Т-банк">Т-банк</div>
+                        <div class="bank-option" data-bank="ВТБ">ВТБ</div>
+                    </div>
+                </div>
+
+                <button class="btn" id="createOrderBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    Создать заявку
+                </button>
+
                 <div class="info-text">
-                    <i class="fas fa-exclamation-triangle"></i> Черные монеты запрещены
+                    <i class="fas fa-shield-alt"></i> После создания заявки вы получите инструкцию для оплаты
                 </div>
             </div>
         </div>
 
+        <!-- Панель моих заявок -->
+        <div id="panelMyOrders" class="panel">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-list"></i>
+                    Мои заявки
+                </div>
+                <div id="myOrdersList"></div>
+            </div>
+        </div>
+
+        <!-- Админ панель (только для админа) -->
+        <div id="panelAdmin" class="panel">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-crown"></i>
+                    Админ панель - Активные заявки
+                </div>
+                <div id="adminOrdersList"></div>
+            </div>
+        </div>
+
+        <!-- Префиксы -->
         <div id="panelPrefixes" class="panel">
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-hashtag"></i>
                     Префиксы в чате услуг
                 </div>
-                <div class="info-text" style="margin-bottom: 12px;">
-                    Нажмите на префикс, чтобы открыть чат
-                </div>
                 <div class="prefix-list" id="prefixList"></div>
             </div>
         </div>
 
+        <!-- Подарок -->
         <div id="panelGift" class="panel">
             <div class="card gift-card">
                 <div class="gift-icon">
@@ -580,74 +616,24 @@
                     Оставляй отзыв в проверенных чатах и получай<br>
                     <strong>плюшевого мишку Telegram</strong> в подарок!
                 </div>
-                <div class="chat-list">
-                    <div style="font-size: 12px; color: #c084fc; margin-bottom: 8px;">Чаты для отзывов:</div>
-                    <span>Jess</span>
-                    <span>FRK</span>
-                    <span>OLD</span>
-                    <span>Вера Отзывы</span>
-                </div>
-                <div class="info-text">
-                    <i class="fas fa-info-circle"></i> После отзыва напиши мне — отправлю мишку. Подарок за каждый отзыв!
-                </div>
             </div>
         </div>
 
+        <!-- Правила -->
         <div id="panelRules" class="panel">
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-book"></i>
-                    Правила чата
+                    Правила
                 </div>
                 <div class="rules-content">
                     <div class="rules-section">
-                        <h4>1. Общие положения</h4>
-                        <p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил и обязуется соблюдать их в полном объёме.</p>
-                        <p>1.2 Срок подачи апелляции на наказание, которое пользователь считает несправедливым, не должен превышать 48 часов с момента его получения. Апелляции, поданные по истечении данного срока, рассмотрению не подлежат.</p>
-                        <p>1.3 Администрация проекта Ja Angel не несёт ответственности за фейковые аккаунты и не обязана возмещать пользователю утраченные средства, ценности или иные ресурсы, возникшие в результате сделок между участниками. Исключение составляют случаи, связанные с официальным депозитом, размещённым в переходнике или в био чата, при условии предоставления полных и подтверждённых доказательств.</p>
-                        <p>1.4 Пользователь несёт личную ответственность перед участниками сделки за действия третьих лиц, включая случаи, когда такие действия приводят к нарушению прав и законных интересов сторон. В подобных ситуациях наказания могут применяться как к участнику сделки, так и к третьему лицу.</p>
-                        <p>1.5 Незнание настоящих правил не освобождает пользователя от ответственности.</p>
-                    </div>
-
-                    <div class="rules-section">
-                        <h4>2. Нарушения и меры наказания</h4>
-                        <p>2.1 Наличие подтверждённых доказательств скама, попыток обмана, введения в заблуждение пользователей или администрации проекта. <span class="punishment">Наказание: бан.</span></p>
-                        <p>2.2 Запрещена реклама, привлечение, перегон или переманивание участников любыми способами без предварительного согласования с руководством проекта. <span class="punishment">Наказание: бан.</span></p>
-                        <p>2.3 Угрозы жизни и здоровью, а также взаимодействие с подозрительными лицами. <span class="punishment">Наказание: бан.</span></p>
-                        <p>2.4 Категорически запрещено оставлять отзывы, которые не соответствуют действительности, искажают факты либо вводят в заблуждение пользователей. <span class="punishment">Наказание: бан.</span></p>
-                        <p>2.5 Оскорбление участников проекта. <span class="punishment">Наказание: мут 24 часа.</span></p>
-                        <p>2.6 Предложения любых видов азартных игр на деньги в чате. <span class="punishment">Наказание: мут 24 часа.</span></p>
-                        <p>2.7 Отметка администрации в случае игнорирования личных сообщений в течение 24 часов. <span class="punishment">Наказание: мут 5 часов.</span></p>
-                        <p>2.8 Обмен и покупка USDT запрещена. <span class="punishment">Наказание: бан.</span></p>
-                    </div>
-
-                    <div class="rules-section">
-                        <h4>3. Споры и разрешение конфликтов</h4>
-                        <p>3.1 В случае возникновения спорных ситуаций стороны обязаны предоставить администрации полные и достоверные доказательства (скриншоты переписок, чеки, ссылки и иные материалы).</p>
-                        <p>3.2 Администрация проекта Ja Angel выступает в роли независимой стороны и принимает решение на основании предоставленных доказательств. Решение администрации является окончательным и обязательным к исполнению.</p>
-                        <p>3.3 Споры без предоставления доказательств либо с поддельными материалами рассмотрению не подлежат.</p>
-                        <p>3.4 Попытка давления на администрацию, манипуляций или введения в заблуждение в процессе разбирательства приравнивается к нарушению правил. <span class="punishment">Наказание: мут или бан (на усмотрение администрации).</span></p>
-                    </div>
-
-                    <div class="rules-section">
-                        <h4>4. Депозиты и финансовые обязательства</h4>
-                        <p>4.1 Официальным депозитом считается только депозит, переданный через реквизиты, указанные администрацией, размещённые в переходнике или био чата проекта Ja Angel.</p>
-                        <p>4.2 Администрация не несёт ответственности за депозиты и финансовые операции, совершённые вне официальных каналов проекта.</p>
-                        <p>4.3 Возврат депозита возможен исключительно при наличии подтверждённых доказательств нарушения условий сделки со стороны одного из участников и только после рассмотрения администрацией.</p>
-                        <p>4.4 Срок рассмотрения депозитных споров может составлять до 72 часов с момента предоставления полного пакета доказательств.</p>
-                    </div>
-
-                    <div class="rules-section">
-                        <h4>5. Роль и полномочия администрации</h4>
-                        <p>5.1 Администрация проекта Ja Angel имеет право: выдавать наказания в рамках настоящих правил; запрашивать дополнительные доказательства; принимать решения в спорных и нестандартных ситуациях; удалять контент, нарушающий правила проекта.</p>
-                        <p>5.2 Администрация вправе не раскрывать внутренние процессы принятия решений и может отказать в комментариях без объяснения причин.</p>
-                        <p>5.3 Неуважительное общение с администрацией, давление или попытки подрыва её авторитета рассматриваются как нарушение правил. <span class="punishment">Наказание: мут или бан (на усмотрение администрации).</span></p>
-                    </div>
-
-                    <div class="rules-section">
-                        <h4>6. Заключительные положения</h4>
-                        <p>6.1 Администрация проекта оставляет за собой право изменять и дополнять настоящий свод правил без предварительного уведомления пользователей.</p>
-                        <p>6.2 Актуальная версия правил считается действующей с момента публикации. Пользователи обязаны самостоятельно отслеживать обновления.</p>
+                        <h4>Правила обмена</h4>
+                        <p>1. Минимальная сумма обмена: 7 USDT</p>
+                        <p>2. После создания заявки вы получите уникальный код оплаты</p>
+                        <p>3. Оплата производится по ссылке: t.me/send?start=IVbPoRLGan1F</p>
+                        <p>4. При оплате обязательно укажите полученный код в сообщении</p>
+                        <p>5. После подтверждения оплаты USDT будут отправлены на указанный кошелек</p>
                     </div>
                 </div>
             </div>
@@ -657,6 +643,10 @@
             <button class="nav-btn active" id="navExchange">
                 <i class="fas fa-exchange-alt"></i>
                 <span>Обмен</span>
+            </button>
+            <button class="nav-btn" id="navMyOrders">
+                <i class="fas fa-clock"></i>
+                <span>Заявки</span>
             </button>
             <button class="nav-btn" id="navPrefixes">
                 <i class="fas fa-at"></i>
@@ -674,96 +664,402 @@
     </div>
 
     <script>
-        (function() {
-            const tg = window.Telegram.WebApp;
-            tg.expand();
-            tg.enableClosingConfirmation();
-            tg.setHeaderColor('#0a0a14');
-            tg.setBackgroundColor('#0a0a14');
-
+        // Supabase конфигурация - ЗАМЕНИ НА СВОИ ДАННЫЕ!
+        const SUPABASE_URL = 'https://aoogkjqdsbozaeblxloc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvb2dranFkc2JvemFlYmx4bG9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjY5MTEsImV4cCI6MjA4OTcwMjkxMX0.w8Jm5AS8aW3yjD6Uw8iGSnlHYQQU-BCpfSqIdowhA2Y';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.setHeaderColor('#0a0a14');
+        
+        // Данные пользователя
+        let user = null;
+        const ADMIN_ID = 8155919358;
+        let selectedBank = 'Сбер';
+        
+        // Курсы
+        const rates = [
+            { min: 0, max: 7, rate: 76 },
+            { min: 7, max: 20, rate: 76 },
+            { min: 20, max: 50, rate: 77 },
+            { min: 50, max: 100, rate: 78 },
+            { min: 100, max: Infinity, rate: 79 }
+        ];
+        
+        function getRateForAmount(amount) {
+            if (amount < 7) return 76;
+            for (let i = 0; i < rates.length; i++) {
+                if (amount >= rates[i].min && amount < rates[i].max) {
+                    return rates[i].rate;
+                }
+            }
+            return 79;
+        }
+        
+        function calculateRub() {
+            let usd = parseFloat(document.getElementById('usdInput').value);
+            if (isNaN(usd) || usd < 0) usd = 0;
+            const rate = getRateForAmount(usd);
+            const rub = usd * rate;
+            document.getElementById('rubResult').innerText = `${Math.floor(rub)} ₽`;
+            return { usd, rub: Math.floor(rub), rate };
+        }
+        
+        // Генерация уникального кода
+        function generateSecretCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return code;
+        }
+        
+        // Показать тост
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = isError ? '#dc2626' : '#10b981';
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Создание заявки
+        async function createOrder() {
+            if (!user) {
+                showToast('Ошибка авторизации', true);
+                return;
+            }
+            
+            const { usd, rub, rate } = calculateRub();
+            
+            if (usd < 7) {
+                showToast('Минимальная сумма: 7 USDT', true);
+                return;
+            }
+            
+            const phone = document.getElementById('phoneInput').value.trim();
+            if (!phone) {
+                showToast('Введите номер телефона', true);
+                return;
+            }
+            
+            const secretCode = generateSecretCode();
+            
+            const { data, error } = await supabase
+                .from('exchange_requests')
+                .insert([{
+                    user_id: user.id,
+                    username: user.username || user.first_name,
+                    amount_usd: usd,
+                    amount_rub: rub,
+                    rate: rate,
+                    phone: phone,
+                    bank: selectedBank,
+                    secret_code: secretCode,
+                    status: 'pending'
+                }])
+                .select()
+                .single();
+            
+            if (error) {
+                console.error(error);
+                showToast('Ошибка создания заявки', true);
+                return;
+            }
+            
+            // Показываем модальное окно с инструкцией
+            showPaymentInstructions(data);
+        }
+        
+        function showPaymentInstructions(order) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <i class="fas fa-info-circle" style="font-size: 40px; color: #c084fc;"></i>
+                    <h3 style="margin: 12px 0;">Заявка #${order.id.slice(0, 8)}</h3>
+                    <p style="font-size: 13px; color: #aaa;">Сумма: ${order.amount_usd} USDT</p>
+                    <p style="font-size: 13px; color: #aaa;">К оплате: ${order.amount_rub} ₽</p>
+                    <div class="secret-code">
+                        ${order.secret_code}
+                    </div>
+                    <p style="font-size: 12px; margin: 10px 0;">Ваш уникальный код</p>
+                    <div style="background: #0a0a14; padding: 10px; border-radius: 12px; margin: 10px 0;">
+                        <p style="font-size: 11px; color: #888;">Инструкция по оплате:</p>
+                        <p style="font-size: 12px;">1. Перейдите по ссылке:</p>
+                        <p style="font-size: 11px; color: #c084fc; word-break: break-all;">t.me/send?start=IVbPoRLGan1F</p>
+                        <p style="font-size: 12px; margin-top: 8px;">2. В сообщении укажите:</p>
+                        <p style="font-size: 11px; background: #000; padding: 6px; border-radius: 8px; margin: 6px 0;">
+                            Сумма: ${order.amount_rub} ₽<br>
+                            Код: ${order.secret_code}
+                        </p>
+                        <p style="font-size: 11px; color: #f59e0b;">⚠️ Без указания кода оплата не будет засчитана!</p>
+                    </div>
+                    <button class="btn" id="closeModalBtn" style="margin-top: 12px;">Понятно</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('closeModalBtn').onclick = () => modal.remove();
+            
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            
+            // Обновляем список заявок
+            loadMyOrders();
+        }
+        
+        // Загрузка заявок пользователя
+        async function loadMyOrders() {
+            if (!user) return;
+            
+            const { data, error } = await supabase
+                .from('exchange_requests')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error(error);
+                return;
+            }
+            
+            const container = document.getElementById('myOrdersList');
+            if (!container) return;
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="info-text">У вас пока нет заявок</div>';
+                return;
+            }
+            
+            container.innerHTML = data.map(order => `
+                <div class="admin-request ${order.status}">
+                    <div class="request-header">
+                        <span class="request-id">#${order.id.slice(0, 8)}</span>
+                        <span class="request-status ${order.status}">${getStatusText(order.status)}</span>
+                    </div>
+                    <div class="request-details">
+                        ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
+                        Код: ${order.secret_code}<br>
+                        Статус: ${getStatusText(order.status)}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Загрузка заявок для админа
+        async function loadAdminOrders() {
+            if (!user || user.id !== ADMIN_ID) return;
+            
+            const { data, error } = await supabase
+                .from('exchange_requests')
+                .select('*')
+                .in('status', ['pending', 'paid'])
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error(error);
+                return;
+            }
+            
+            const container = document.getElementById('adminOrdersList');
+            if (!container) return;
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="info-text">Нет активных заявок</div>';
+                return;
+            }
+            
+            container.innerHTML = data.map(order => `
+                <div class="admin-request ${order.status}">
+                    <div class="request-header">
+                        <span class="request-id">#${order.id.slice(0, 8)}</span>
+                        <span class="request-status ${order.status}">${getStatusText(order.status)}</span>
+                    </div>
+                    <div class="request-details">
+                        <strong>${order.username || 'Без имени'}</strong> (${order.user_id})<br>
+                        ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
+                        📞 ${order.phone}<br>
+                        🏦 ${order.bank}<br>
+                        🔑 Код: <strong>${order.secret_code}</strong>
+                    </div>
+                    <div class="request-actions">
+                        ${order.status === 'pending' ? `
+                            <button class="small-btn btn-success" onclick="markAsPaid('${order.id}')">✅ Оплачено</button>
+                            <button class="small-btn btn-danger" onclick="cancelOrder('${order.id}')">❌ Отмена</button>
+                        ` : ''}
+                        ${order.status === 'paid' ? `
+                            <button class="small-btn btn-success" onclick="completeOrder('${order.id}')">✅ Завершить</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getStatusText(status) {
+            const statuses = {
+                pending: '🟡 Ожидает оплаты',
+                paid: '🔵 Оплачено',
+                completed: '🟢 Завершено',
+                cancelled: '🔴 Отменено'
+            };
+            return statuses[status] || status;
+        }
+        
+        // Админские действия
+        window.markAsPaid = async (orderId) => {
+            const { error } = await supabase
+                .from('exchange_requests')
+                .update({ status: 'paid', paid_at: new Date().toISOString() })
+                .eq('id', orderId);
+            
+            if (error) {
+                showToast('Ошибка', true);
+            } else {
+                showToast('Заявка отмечена как оплаченная');
+                loadAdminOrders();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        };
+        
+        window.completeOrder = async (orderId) => {
+            const { error } = await supabase
+                .from('exchange_requests')
+                .update({ status: 'completed' })
+                .eq('id', orderId);
+            
+            if (error) {
+                showToast('Ошибка', true);
+            } else {
+                showToast('Обмен завершен');
+                loadAdminOrders();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        };
+        
+        window.cancelOrder = async (orderId) => {
+            const { error } = await supabase
+                .from('exchange_requests')
+                .update({ status: 'cancelled' })
+                .eq('id', orderId);
+            
+            if (error) {
+                showToast('Ошибка', true);
+            } else {
+                showToast('Заявка отменена');
+                loadAdminOrders();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+            }
+        };
+        
+        // Префиксы
+        const prefixes = [
+            { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
+            { name: '@duba_t', desc: 'скупает Макс (объём)' }
+        ];
+        
+        function buildPrefixes() {
+            const container = document.getElementById('prefixList');
+            if (!container) return;
+            container.innerHTML = prefixes.map(prefix => `
+                <div class="prefix-item" onclick="window.open('https://t.me/${prefix.name.replace('@', '')}', '_blank')">
+                    <i class="fas fa-at"></i>
+                    <div class="prefix-info">
+                        <div class="prefix-name">${prefix.name}</div>
+                        <div class="prefix-desc">${prefix.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Навигация
+        function setupNavigation() {
+            const panels = ['exchange', 'myOrders', 'prefixes', 'gift', 'rules'];
+            let adminPanelAdded = false;
+            
+            if (user && user.id === ADMIN_ID) {
+                panels.splice(2, 0, 'admin');
+                adminPanelAdded = true;
+                
+                const navContainer = document.querySelector('.bottom-nav');
+                const adminBtn = document.createElement('button');
+                adminBtn.className = 'nav-btn';
+                adminBtn.id = 'navAdmin';
+                adminBtn.innerHTML = '<i class="fas fa-crown"></i><span>Админ</span>';
+                navContainer.appendChild(adminBtn);
+                
+                document.getElementById('navAdmin').onclick = () => setActive('admin');
+            }
+            
+            function setActive(panel) {
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                
+                document.getElementById(`panel${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
+                document.getElementById(`nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
+                
+                if (panel === 'myOrders') loadMyOrders();
+                if (panel === 'admin' && user?.id === ADMIN_ID) loadAdminOrders();
+                
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }
+            
+            document.getElementById('navExchange').onclick = () => setActive('exchange');
+            document.getElementById('navMyOrders').onclick = () => setActive('myOrders');
+            document.getElementById('navPrefixes').onclick = () => setActive('prefixes');
+            document.getElementById('navGift').onclick = () => setActive('gift');
+            document.getElementById('navRules').onclick = () => setActive('rules');
+            
+            window.setActive = setActive;
+        }
+        
+        // Инициализация
+        async function init() {
+            // Получаем данные пользователя
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                user = tg.initDataUnsafe.user;
+            } else {
+                user = { id: 123456789, username: 'test_user', first_name: 'Test' };
+            }
+            
+            console.log('User:', user);
+            
+            // Регистрируем пользователя в БД
+            const { error: upsertError } = await supabase
+                .from('users')
+                .upsert({
+                    telegram_id: user.id,
+                    username: user.username || user.first_name,
+                    first_name: user.first_name,
+                    last_seen: new Date().toISOString()
+                }, { onConflict: 'telegram_id' });
+            
+            if (upsertError) console.error('Error upserting user:', upsertError);
+            
+            // Настройка выбора банка
+            document.querySelectorAll('.bank-option').forEach(opt => {
+                opt.onclick = () => {
+                    document.querySelectorAll('.bank-option').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    selectedBank = opt.dataset.bank;
+                };
+                if (opt.dataset.bank === 'Сбер') opt.classList.add('selected');
+            });
+            
+            document.getElementById('usdInput').addEventListener('input', () => calculateRub());
+            document.getElementById('createOrderBtn').onclick = createOrder;
+            
+            buildPrefixes();
+            setupNavigation();
+            
+            // Скрываем сплеш
             const splash = document.getElementById('splash');
             const main = document.getElementById('main');
             const loadProgress = document.getElementById('loadProgress');
-
-            const panelExchange = document.getElementById('panelExchange');
-            const panelPrefixes = document.getElementById('panelPrefixes');
-            const panelGift = document.getElementById('panelGift');
-            const panelRules = document.getElementById('panelRules');
             
-            const navExchange = document.getElementById('navExchange');
-            const navPrefixes = document.getElementById('navPrefixes');
-            const navGift = document.getElementById('navGift');
-            const navRules = document.getElementById('navRules');
-            
-            const contactBtn = document.getElementById('contactBtn');
-            const chatServiceBtn = document.getElementById('chatServiceBtn');
-            const prefixList = document.getElementById('prefixList');
-            
-            const usdInput = document.getElementById('usdInput');
-            const rubResult = document.getElementById('rubResult');
-
-            const rates = [
-                { min: 0, max: 7, rate: 76 },
-                { min: 7, max: 20, rate: 76 },
-                { min: 20, max: 50, rate: 77 },
-                { min: 50, max: 100, rate: 78 },
-                { min: 100, max: Infinity, rate: 79 }
-            ];
-
-            function getRateForAmount(amount) {
-                if (amount < 7) return 76;
-                for (let i = 0; i < rates.length; i++) {
-                    if (amount >= rates[i].min && amount < rates[i].max) {
-                        return rates[i].rate;
-                    }
-                }
-                return 79;
-            }
-
-            function calculateRub() {
-                let usd = parseFloat(usdInput.value);
-                if (isNaN(usd) || usd < 0) usd = 0;
-                if (usd < 7) {
-                    rubResult.innerText = `${Math.floor(usd * 76)} ₽`;
-                } else {
-                    const rate = getRateForAmount(usd);
-                    const rub = usd * rate;
-                    rubResult.innerText = `${Math.floor(rub)} ₽`;
-                }
-            }
-
-            usdInput.addEventListener('input', calculateRub);
-            calculateRub();
-
-            const prefixes = [
-                { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
-                { name: '@duba_t', desc: 'скупает Макс (объём)' }
-            ];
-
-            function buildPrefixes() {
-                prefixList.innerHTML = '';
-                prefixes.forEach(prefix => {
-                    const item = document.createElement('div');
-                    item.className = 'prefix-item';
-                    item.innerHTML = `
-                        <i class="fas fa-at"></i>
-                        <div class="prefix-info">
-                            <div class="prefix-name">${prefix.name}</div>
-                            <div class="prefix-desc">${prefix.desc}</div>
-                        </div>
-                    `;
-                    item.addEventListener('click', () => {
-                        const username = prefix.name.replace('@', '');
-                        const url = 'https://t.me/' + username;
-                        if (tg.openTelegramLink) tg.openTelegramLink(url);
-                        else window.open(url, '_blank');
-                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                    });
-                    prefixList.appendChild(item);
-                });
-            }
-            buildPrefixes();
-
             let progress = 0;
             const interval = setInterval(() => {
                 progress += Math.random() * 20;
@@ -781,52 +1077,9 @@
                 }
                 loadProgress.style.width = Math.min(progress, 100) + '%';
             }, 70);
-
-            function setActive(panel) {
-                panelExchange.classList.remove('active');
-                panelPrefixes.classList.remove('active');
-                panelGift.classList.remove('active');
-                panelRules.classList.remove('active');
-                navExchange.classList.remove('active');
-                navPrefixes.classList.remove('active');
-                navGift.classList.remove('active');
-                navRules.classList.remove('active');
-
-                if (panel === 'exchange') {
-                    panelExchange.classList.add('active');
-                    navExchange.classList.add('active');
-                } else if (panel === 'prefixes') {
-                    panelPrefixes.classList.add('active');
-                    navPrefixes.classList.add('active');
-                } else if (panel === 'gift') {
-                    panelGift.classList.add('active');
-                    navGift.classList.add('active');
-                } else {
-                    panelRules.classList.add('active');
-                    navRules.classList.add('active');
-                }
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            }
-
-            navExchange.addEventListener('click', () => setActive('exchange'));
-            navPrefixes.addEventListener('click', () => setActive('prefixes'));
-            navGift.addEventListener('click', () => setActive('gift'));
-            navRules.addEventListener('click', () => setActive('rules'));
-
-            contactBtn.addEventListener('click', () => {
-                const url = 'https://t.me/JANGEL_3_1';
-                if (tg.openTelegramLink) tg.openTelegramLink(url);
-                else window.open(url, '_blank');
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-            });
-
-            chatServiceBtn.addEventListener('click', () => {
-                const url = 'https://t.me/+g4iD6cclIpg3MDEy';
-                if (tg.openTelegramLink) tg.openTelegramLink(url);
-                else window.open(url, '_blank');
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            });
-        })();
+        }
+        
+        init();
     </script>
 </body>
 </html>
