@@ -767,8 +767,6 @@
                 
                 showToast('Заявка создана! Код: ' + secretCode);
                 loadMyOrders();
-                
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
             
             // Загрузка моих заявок
@@ -903,8 +901,6 @@
                     
                     if (panel === 'myOrders') loadMyOrders();
                     if (panel === 'admin' && currentUser?.id === ADMIN_ID) loadAdminOrders();
-                    
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
                 };
                 
                 document.getElementById('navExchange').onclick = () => setActive('exchange');
@@ -985,7 +981,6 @@
                             setTimeout(() => {
                                 splash.style.display = 'none';
                                 main.style.display = 'block';
-                                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
                             }, 300);
                         }, 200);
                     }
@@ -1004,7 +999,6 @@
                 else {
                     showToast('Отмечено как оплачено');
                     loadAdminOrders();
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
             };
             
@@ -1018,7 +1012,6 @@
                 else {
                     showToast('Обмен завершен');
                     loadAdminOrders();
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
             };
             
@@ -1032,13 +1025,14 @@
                 else {
                     showToast('Заявка отменена');
                     loadAdminOrders();
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
                 }
             };
             
-            // Запуск
-            tg.expand();
-            tg.enableClosingConfirmation();
+            // Запуск - убираем неподдерживаемые функции
+            try {
+                tg.expand();
+            } catch(e) {}
+            
             init();
         })();
     </script>
