@@ -1,0 +1,832 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Jangel 3.1 | Обмен</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #0a0a14;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a14;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .splash-logo {
+            text-align: center;
+        }
+
+        .splash-icon {
+            font-size: 60px;
+            color: #a855f7;
+            margin-bottom: 16px;
+        }
+
+        .splash-logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #c084fc;
+        }
+
+        .splash-logo p {
+            font-size: 11px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .loading-bar {
+            width: 180px;
+            height: 2px;
+            background: #2a2a3a;
+            border-radius: 2px;
+            margin-top: 24px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: #a855f7;
+            transition: width 0.2s;
+        }
+
+        .main-content {
+            display: none;
+            padding-bottom: 65px;
+        }
+
+        .header {
+            background: #12121c;
+            padding: 14px 16px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a3a;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #c084fc;
+        }
+
+        .welcome-text {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 8px;
+            line-height: 1.3;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 8px 10px;
+            border-radius: 12px;
+        }
+
+        .welcome-text span {
+            color: #c084fc;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #12121c;
+            display: flex;
+            border-top: 1px solid #2a2a3a;
+            padding: 6px 12px 18px;
+            gap: 6px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 8px;
+            border-radius: 28px;
+            color: #888;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn i {
+            font-size: 14px;
+        }
+
+        .nav-btn.active {
+            background: #a855f7;
+            color: white;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.96);
+        }
+
+        .panel {
+            display: none;
+            padding: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .card {
+            background: #12121c;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid #2a2a3a;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-title i {
+            font-size: 14px;
+        }
+
+        .rate-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2a3a;
+        }
+
+        .rate-row:last-child {
+            border-bottom: none;
+        }
+
+        .rate-amount {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .rate-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #c084fc;
+        }
+
+        .btn {
+            background: #a855f7;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 36px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #1e1e2a;
+            border: 1px solid #a855f7;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:active {
+            background: #2a2a3a;
+        }
+
+        .single-button {
+            margin-top: 10px;
+        }
+
+        .info-text {
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+            margin-top: 10px;
+            padding: 6px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 10px;
+        }
+
+        .reputation-block {
+            text-align: center;
+            margin-top: 10px;
+            padding: 6px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 10px;
+        }
+
+        .reputation-block span {
+            color: #c084fc;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .calculator {
+            background: #1e1e2a;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .calc-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .calc-input {
+            width: 100%;
+            background: #0a0a14;
+            border: 1px solid #a855f7;
+            border-radius: 40px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+        }
+
+        .calc-input:focus {
+            border-color: #c084fc;
+        }
+
+        .calc-result {
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px;
+            background: #0a0a14;
+            border-radius: 40px;
+        }
+
+        .calc-result-label {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .calc-result-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #c084fc;
+        }
+
+        .calc-hint {
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .prefix-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .prefix-item {
+            background: #1e1e2a;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border: 1px solid #2a2a3a;
+        }
+
+        .prefix-item:active {
+            background: #2a2a3a;
+        }
+
+        .prefix-item i {
+            color: #a855f7;
+            font-size: 18px;
+            width: 28px;
+        }
+
+        .prefix-info {
+            flex: 1;
+        }
+
+        .prefix-name {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: monospace;
+            margin-bottom: 4px;
+        }
+
+        .prefix-desc {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .gift-card {
+            text-align: center;
+            padding: 20px 16px;
+        }
+
+        .gift-icon {
+            font-size: 55px;
+            margin-bottom: 16px;
+        }
+
+        .gift-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #c084fc;
+            margin-bottom: 12px;
+        }
+
+        .bear-icon {
+            font-size: 40px;
+            margin: 10px 0;
+        }
+
+        .gift-text {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .chat-list {
+            background: #1e1e2a;
+            border-radius: 14px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .chat-list span {
+            display: inline-block;
+            background: #a855f7;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 4px;
+        }
+
+        /* Стили для правил */
+        .rules-content {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #ccc;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .rules-section {
+            margin-bottom: 16px;
+        }
+
+        .rules-section h4 {
+            color: #c084fc;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+
+        .rules-section p {
+            margin-bottom: 8px;
+        }
+
+        .rules-list {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        .rules-list li {
+            margin-bottom: 6px;
+        }
+
+        .rule-item {
+            margin-bottom: 10px;
+        }
+
+        .punishment {
+            color: #ffb347;
+        }
+
+        hr {
+            border-color: #2a2a3a;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-screen" id="splash">
+        <div class="splash-logo">
+            <div class="splash-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1>JANGEL 3.1</h1>
+            <p>обмен валют</p>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="main">
+        <div class="header">
+            <h1>JANGEL 3.1</h1>
+            <div class="welcome-text">
+                Добро пожаловать дорогой и уважаемый пользователь! Мы ради приветствовать тебя.<br>
+                На связи: <span>@JANGEL_3_1</span>
+            </div>
+        </div>
+
+        <div id="panelExchange" class="panel active">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-arrow-down"></i>
+                    Покупаю USDT
+                </div>
+                <div class="rate-row">
+                    <span class="rate-amount">от 7$</span>
+                    <span class="rate-price">76 ₽</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-amount">от 20$</span>
+                    <span class="rate-price">77 ₽</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-amount">от 50$</span>
+                    <span class="rate-price">78 ₽</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-amount">от 100$</span>
+                    <span class="rate-price">79 ₽</span>
+                </div>
+
+                <div class="card-title" style="margin-top: 12px;">
+                    <i class="fas fa-arrow-up"></i>
+                    Продаю USDT
+                </div>
+                <div class="rate-row">
+                    <span class="rate-amount">от 50$</span>
+                    <span class="rate-price">88+ ₽</span>
+                </div>
+
+                <div class="calculator">
+                    <div class="calc-label">
+                        <i class="fas fa-calculator"></i> Калькулятор покупки USDT
+                    </div>
+                    <input type="number" id="usdInput" class="calc-input" placeholder="Введите сумму в $" value="7" step="1">
+                    <div class="calc-result">
+                        <div class="calc-result-label">Вы получите:</div>
+                        <div class="calc-result-value" id="rubResult">532 ₽</div>
+                    </div>
+                    <div class="calc-hint">Курс зависит от суммы. Чем больше сумма — тем выше курс</div>
+                </div>
+
+                <button class="btn" id="contactBtn">
+                    <i class="fab fa-telegram"></i>
+                    Связаться
+                </button>
+
+                <button class="btn btn-secondary single-button" id="chatServiceBtn">
+                    <i class="fas fa-comments"></i>
+                    Чат услуг
+                </button>
+
+                <div class="reputation-block">
+                    <span>Репутация 4000+</span>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-exclamation-triangle"></i> Черные монеты запрещены
+                </div>
+            </div>
+        </div>
+
+        <div id="panelPrefixes" class="panel">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-hashtag"></i>
+                    Префиксы в чате услуг
+                </div>
+                <div class="info-text" style="margin-bottom: 12px;">
+                    Нажмите на префикс, чтобы открыть чат
+                </div>
+                <div class="prefix-list" id="prefixList"></div>
+            </div>
+        </div>
+
+        <div id="panelGift" class="panel">
+            <div class="card gift-card">
+                <div class="gift-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="gift-title">
+                    Интуитивный подарок
+                </div>
+                <div class="bear-icon">
+                    🧸
+                </div>
+                <div class="gift-text">
+                    Оставляй отзыв в проверенных чатах и получай<br>
+                    <strong>плюшевого мишку Telegram</strong> в подарок!
+                </div>
+                <div class="chat-list">
+                    <div style="font-size: 12px; color: #c084fc; margin-bottom: 8px;">Чаты для отзывов:</div>
+                    <span>Jess</span>
+                    <span>FRK</span>
+                    <span>OLD</span>
+                    <span>Вера Отзывы</span>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-info-circle"></i> После отзыва напиши мне — отправлю мишку. Подарок за каждый отзыв!
+                </div>
+            </div>
+        </div>
+
+        <div id="panelRules" class="panel">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-book"></i>
+                    Правила чата
+                </div>
+                <div class="rules-content">
+                    <div class="rules-section">
+                        <h4>1. Общие положения</h4>
+                        <p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил и обязуется соблюдать их в полном объёме.</p>
+                        <p>1.2 Срок подачи апелляции на наказание, которое пользователь считает несправедливым, не должен превышать 48 часов с момента его получения. Апелляции, поданные по истечении данного срока, рассмотрению не подлежат.</p>
+                        <p>1.3 Администрация проекта Ja Angel не несёт ответственности за фейковые аккаунты и не обязана возмещать пользователю утраченные средства, ценности или иные ресурсы, возникшие в результате сделок между участниками. Исключение составляют случаи, связанные с официальным депозитом, размещённым в переходнике или в био чата, при условии предоставления полных и подтверждённых доказательств.</p>
+                        <p>1.4 Пользователь несёт личную ответственность перед участниками сделки за действия третьих лиц, включая случаи, когда такие действия приводят к нарушению прав и законных интересов сторон. В подобных ситуациях наказания могут применяться как к участнику сделки, так и к третьему лицу.</p>
+                        <p>1.5 Незнание настоящих правил не освобождает пользователя от ответственности.</p>
+                    </div>
+
+                    <div class="rules-section">
+                        <h4>2. Нарушения и меры наказания</h4>
+                        <p>2.1 Наличие подтверждённых доказательств скама, попыток обмана, введения в заблуждение пользователей или администрации проекта. <span class="punishment">Наказание: бан.</span></p>
+                        <p>2.2 Запрещена реклама, привлечение, перегон или переманивание участников любыми способами без предварительного согласования с руководством проекта. <span class="punishment">Наказание: бан.</span></p>
+                        <p>2.3 Угрозы жизни и здоровью, а также взаимодействие с подозрительными лицами. <span class="punishment">Наказание: бан.</span></p>
+                        <p>2.4 Категорически запрещено оставлять отзывы, которые не соответствуют действительности, искажают факты либо вводят в заблуждение пользователей. <span class="punishment">Наказание: бан.</span></p>
+                        <p>2.5 Оскорбление участников проекта. <span class="punishment">Наказание: мут 24 часа.</span></p>
+                        <p>2.6 Предложения любых видов азартных игр на деньги в чате. <span class="punishment">Наказание: мут 24 часа.</span></p>
+                        <p>2.7 Отметка администрации в случае игнорирования личных сообщений в течение 24 часов. <span class="punishment">Наказание: мут 5 часов.</span></p>
+                        <p>2.8 Обмен и покупка USDT запрещена. <span class="punishment">Наказание: бан.</span></p>
+                    </div>
+
+                    <div class="rules-section">
+                        <h4>3. Споры и разрешение конфликтов</h4>
+                        <p>3.1 В случае возникновения спорных ситуаций стороны обязаны предоставить администрации полные и достоверные доказательства (скриншоты переписок, чеки, ссылки и иные материалы).</p>
+                        <p>3.2 Администрация проекта Ja Angel выступает в роли независимой стороны и принимает решение на основании предоставленных доказательств. Решение администрации является окончательным и обязательным к исполнению.</p>
+                        <p>3.3 Споры без предоставления доказательств либо с поддельными материалами рассмотрению не подлежат.</p>
+                        <p>3.4 Попытка давления на администрацию, манипуляций или введения в заблуждение в процессе разбирательства приравнивается к нарушению правил. <span class="punishment">Наказание: мут или бан (на усмотрение администрации).</span></p>
+                    </div>
+
+                    <div class="rules-section">
+                        <h4>4. Депозиты и финансовые обязательства</h4>
+                        <p>4.1 Официальным депозитом считается только депозит, переданный через реквизиты, указанные администрацией, размещённые в переходнике или био чата проекта Ja Angel.</p>
+                        <p>4.2 Администрация не несёт ответственности за депозиты и финансовые операции, совершённые вне официальных каналов проекта.</p>
+                        <p>4.3 Возврат депозита возможен исключительно при наличии подтверждённых доказательств нарушения условий сделки со стороны одного из участников и только после рассмотрения администрацией.</p>
+                        <p>4.4 Срок рассмотрения депозитных споров может составлять до 72 часов с момента предоставления полного пакета доказательств.</p>
+                    </div>
+
+                    <div class="rules-section">
+                        <h4>5. Роль и полномочия администрации</h4>
+                        <p>5.1 Администрация проекта Ja Angel имеет право: выдавать наказания в рамках настоящих правил; запрашивать дополнительные доказательства; принимать решения в спорных и нестандартных ситуациях; удалять контент, нарушающий правила проекта.</p>
+                        <p>5.2 Администрация вправе не раскрывать внутренние процессы принятия решений и может отказать в комментариях без объяснения причин.</p>
+                        <p>5.3 Неуважительное общение с администрацией, давление или попытки подрыва её авторитета рассматриваются как нарушение правил. <span class="punishment">Наказание: мут или бан (на усмотрение администрации).</span></p>
+                    </div>
+
+                    <div class="rules-section">
+                        <h4>6. Заключительные положения</h4>
+                        <p>6.1 Администрация проекта оставляет за собой право изменять и дополнять настоящий свод правил без предварительного уведомления пользователей.</p>
+                        <p>6.2 Актуальная версия правил считается действующей с момента публикации. Пользователи обязаны самостоятельно отслеживать обновления.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active" id="navExchange">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Обмен</span>
+            </button>
+            <button class="nav-btn" id="navPrefixes">
+                <i class="fas fa-at"></i>
+                <span>Префиксы</span>
+            </button>
+            <button class="nav-btn" id="navGift">
+                <i class="fas fa-gift"></i>
+                <span>Подарок</span>
+            </button>
+            <button class="nav-btn" id="navRules">
+                <i class="fas fa-book"></i>
+                <span>Правила</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
+            tg.enableClosingConfirmation();
+            tg.setHeaderColor('#0a0a14');
+            tg.setBackgroundColor('#0a0a14');
+
+            const splash = document.getElementById('splash');
+            const main = document.getElementById('main');
+            const loadProgress = document.getElementById('loadProgress');
+
+            const panelExchange = document.getElementById('panelExchange');
+            const panelPrefixes = document.getElementById('panelPrefixes');
+            const panelGift = document.getElementById('panelGift');
+            const panelRules = document.getElementById('panelRules');
+            
+            const navExchange = document.getElementById('navExchange');
+            const navPrefixes = document.getElementById('navPrefixes');
+            const navGift = document.getElementById('navGift');
+            const navRules = document.getElementById('navRules');
+            
+            const contactBtn = document.getElementById('contactBtn');
+            const chatServiceBtn = document.getElementById('chatServiceBtn');
+            const prefixList = document.getElementById('prefixList');
+            
+            const usdInput = document.getElementById('usdInput');
+            const rubResult = document.getElementById('rubResult');
+
+            const rates = [
+                { min: 0, max: 7, rate: 76 },
+                { min: 7, max: 20, rate: 76 },
+                { min: 20, max: 50, rate: 77 },
+                { min: 50, max: 100, rate: 78 },
+                { min: 100, max: Infinity, rate: 79 }
+            ];
+
+            function getRateForAmount(amount) {
+                if (amount < 7) return 76;
+                for (let i = 0; i < rates.length; i++) {
+                    if (amount >= rates[i].min && amount < rates[i].max) {
+                        return rates[i].rate;
+                    }
+                }
+                return 79;
+            }
+
+            function calculateRub() {
+                let usd = parseFloat(usdInput.value);
+                if (isNaN(usd) || usd < 0) usd = 0;
+                if (usd < 7) {
+                    rubResult.innerText = `${Math.floor(usd * 76)} ₽`;
+                } else {
+                    const rate = getRateForAmount(usd);
+                    const rub = usd * rate;
+                    rubResult.innerText = `${Math.floor(rub)} ₽`;
+                }
+            }
+
+            usdInput.addEventListener('input', calculateRub);
+            calculateRub();
+
+            const prefixes = [
+                { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
+                { name: '@duba_t', desc: 'скупает Макс (объём)' }
+            ];
+
+            function buildPrefixes() {
+                prefixList.innerHTML = '';
+                prefixes.forEach(prefix => {
+                    const item = document.createElement('div');
+                    item.className = 'prefix-item';
+                    item.innerHTML = `
+                        <i class="fas fa-at"></i>
+                        <div class="prefix-info">
+                            <div class="prefix-name">${prefix.name}</div>
+                            <div class="prefix-desc">${prefix.desc}</div>
+                        </div>
+                    `;
+                    item.addEventListener('click', () => {
+                        const username = prefix.name.replace('@', '');
+                        const url = 'https://t.me/' + username;
+                        if (tg.openTelegramLink) tg.openTelegramLink(url);
+                        else window.open(url, '_blank');
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    });
+                    prefixList.appendChild(item);
+                });
+            }
+            buildPrefixes();
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        splash.style.opacity = '0';
+                        setTimeout(() => {
+                            splash.style.display = 'none';
+                            main.style.display = 'block';
+                            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                        }, 300);
+                    }, 200);
+                }
+                loadProgress.style.width = Math.min(progress, 100) + '%';
+            }, 70);
+
+            function setActive(panel) {
+                panelExchange.classList.remove('active');
+                panelPrefixes.classList.remove('active');
+                panelGift.classList.remove('active');
+                panelRules.classList.remove('active');
+                navExchange.classList.remove('active');
+                navPrefixes.classList.remove('active');
+                navGift.classList.remove('active');
+                navRules.classList.remove('active');
+
+                if (panel === 'exchange') {
+                    panelExchange.classList.add('active');
+                    navExchange.classList.add('active');
+                } else if (panel === 'prefixes') {
+                    panelPrefixes.classList.add('active');
+                    navPrefixes.classList.add('active');
+                } else if (panel === 'gift') {
+                    panelGift.classList.add('active');
+                    navGift.classList.add('active');
+                } else {
+                    panelRules.classList.add('active');
+                    navRules.classList.add('active');
+                }
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }
+
+            navExchange.addEventListener('click', () => setActive('exchange'));
+            navPrefixes.addEventListener('click', () => setActive('prefixes'));
+            navGift.addEventListener('click', () => setActive('gift'));
+            navRules.addEventListener('click', () => setActive('rules'));
+
+            contactBtn.addEventListener('click', () => {
+                const url = 'https://t.me/JANGEL_3_1';
+                if (tg.openTelegramLink) tg.openTelegramLink(url);
+                else window.open(url, '_blank');
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            });
+
+            chatServiceBtn.addEventListener('click', () => {
+                const url = 'https://t.me/+g4iD6cclIpg3MDEy';
+                if (tg.openTelegramLink) tg.openTelegramLink(url);
+                else window.open(url, '_blank');
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            });
+        })();
+    </script>
+</body>
+</html>
