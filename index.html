@@ -39,6 +39,11 @@
             50% { transform: translateY(-8px); }
         }
 
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
         .splash-screen {
             position: fixed;
             top: 0;
@@ -145,6 +150,51 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: 700;
+        }
+
+        /* Подсказки для новичков */
+        .tips-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.08));
+            border-left: 3px solid #f59e0b;
+            margin-bottom: 16px;
+        }
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .tip-item:last-child {
+            border-bottom: none;
+        }
+        .tip-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(245, 158, 11, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .tip-icon i {
+            font-size: 14px;
+            color: #f59e0b;
+        }
+        .tip-text {
+            flex: 1;
+        }
+        .tip-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 4px;
+        }
+        .tip-desc {
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.4;
         }
 
         .bottom-nav {
@@ -337,7 +387,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            letter-spacing: -0.2px;
         }
 
         .calc-input {
@@ -497,7 +546,7 @@
             background: #12121c;
             border-radius: 44px;
             padding: 20px;
-            max-width: 320px;
+            max-width: 340px;
             width: 100%;
             text-align: center;
             border: 1px solid rgba(168, 85, 247, 0.3);
@@ -540,7 +589,6 @@
             font-weight: 600;
         }
 
-        /* ВЫДЕЛЕННЫЙ НИК ПОЛЬЗОВАТЕЛЯ */
         .user-nickname {
             font-size: 18px;
             font-weight: 800;
@@ -550,7 +598,6 @@
             background-clip: text;
             display: inline-block;
             letter-spacing: -0.3px;
-            text-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
         }
         
         .user-id-small {
@@ -655,6 +702,30 @@
             font-size: 10px;
             margin-top: 8px;
             color: #9ca3af;
+        }
+        .warning-box {
+            background: rgba(245, 158, 11, 0.12);
+            border-radius: 20px;
+            padding: 12px;
+            margin: 12px 0;
+            text-align: left;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .warning-box i {
+            color: #f59e0b;
+            margin-right: 8px;
+        }
+        .warning-box p {
+            font-size: 11px;
+            color: #fbbf24;
+            line-height: 1.5;
+            margin: 6px 0;
+        }
+        .warning-title {
+            font-weight: 700;
+            font-size: 12px;
+            color: #f59e0b;
+            margin-bottom: 8px;
         }
         .phone-copy-row {
             display: flex;
@@ -806,6 +877,39 @@
                 <div class="reputation-block"><i class="fas fa-star" style="color: #fbbf24;"></i> <span> Репутация 4000+</span></div>
                 <div class="info-text"><i class="fas fa-exclamation-triangle"></i> Черные монеты запрещены</div>
             </div>
+
+            <!-- Подсказки для новичков -->
+            <div class="card tips-card">
+                <div class="card-title" style="font-size: 14px; margin-bottom: 12px;"><i class="fas fa-lightbulb"></i> Как это работает?</div>
+                <div class="tip-item">
+                    <div class="tip-icon"><i class="fas fa-calculator"></i></div>
+                    <div class="tip-text">
+                        <div class="tip-title">1. Выберите сумму</div>
+                        <div class="tip-desc">Введите нужное количество USDT или выберите из быстрых вариантов</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-icon"><i class="fas fa-credit-card"></i></div>
+                    <div class="tip-text">
+                        <div class="tip-title">2. Оплатите счет</div>
+                        <div class="tip-desc">Нажмите "Оплатить счет" — откроется Telegram-бот. Введите ТОЧНУЮ сумму и укажите КОД платежа в комментарии</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="tip-text">
+                        <div class="tip-title">3. Подтвердите оплату</div>
+                        <div class="tip-desc">После оплаты нажмите "Я оплатил(а)" и укажите номер телефона для вывода</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-icon"><i class="fas fa-clock"></i></div>
+                    <div class="tip-text">
+                        <div class="tip-title">4. Ожидайте</div>
+                        <div class="tip-desc">Оператор проверит платеж и отправит USDT в течение 5-15 минут</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="panelMyOrders" class="panel">
@@ -868,9 +972,10 @@
             const tg = window.Telegram.WebApp;
             
             let currentUser = null;
-            const ADMIN_ID = 7442684868;
-            const PAYMENT_LINK = 'http://t.me/send?start=IVk5RW4FMXI6';
+            const ADMIN_ID = 8155919358;
+            const PAYMENT_LINK = 'https://t.me/send?start=IVbPoRLGan1F';
             let activeToast = null;
+            let currentSelectedAmount = 0;
             
             function getRate(amount) {
                 if (amount < 7) return 76;
@@ -896,19 +1001,14 @@
             }
             
             function showToast(msg, isError = false) {
-                if (activeToast) {
-                    activeToast.remove();
-                }
+                if (activeToast) activeToast.remove();
                 const toast = document.createElement('div');
                 toast.className = 'toast';
                 toast.style.background = isError ? '#ef4444' : '#10b981';
                 toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${msg}`;
                 document.body.appendChild(toast);
                 activeToast = toast;
-                setTimeout(() => {
-                    if (toast && toast.remove) toast.remove();
-                    if (activeToast === toast) activeToast = null;
-                }, 2800);
+                setTimeout(() => { if (toast && toast.remove) toast.remove(); if (activeToast === toast) activeToast = null; }, 2800);
             }
             
             function copyToClipboard(text) {
@@ -932,14 +1032,9 @@
                 if (!data || data.length === 0) { container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет активных заявок</div>'; return; }
                 
                 container.innerHTML = data.map(order => {
-                    // Получаем ник пользователя
                     let userNick = order.username || '';
-                    if (userNick && !userNick.startsWith('@')) {
-                        userNick = '@' + userNick;
-                    }
-                    if (!userNick || userNick === '@') {
-                        userNick = 'User_' + String(order.user_id).slice(-6);
-                    }
+                    if (userNick && !userNick.startsWith('@')) userNick = '@' + userNick;
+                    if (!userNick || userNick === '@') userNick = 'User_' + String(order.user_id).slice(-6);
                     
                     return `
                     <div class="admin-request">
@@ -984,22 +1079,10 @@
                 });
             }
             
-            window.copyPhone = (phone) => { copyToClipboard(phone); };
-            window.markPaid = async (id) => { 
-                await supabaseClient.from('exchange_requests').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', id); 
-                showToast('Отмечено как оплачено'); 
-                loadAdminOrders(); 
-            };
-            window.completeOrder = async (id) => { 
-                await supabaseClient.from('exchange_requests').update({ status: 'completed' }).eq('id', id); 
-                showToast('Обмен завершен'); 
-                loadAdminOrders(); 
-            };
-            window.cancelOrder = async (id) => { 
-                await supabaseClient.from('exchange_requests').update({ status: 'cancelled' }).eq('id', id); 
-                showToast('Заявка отменена'); 
-                loadAdminOrders(); 
-            };
+            window.copyPhone = (phone) => copyToClipboard(phone);
+            window.markPaid = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', id); showToast('Отмечено как оплачено'); loadAdminOrders(); };
+            window.completeOrder = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'completed' }).eq('id', id); showToast('Обмен завершен'); loadAdminOrders(); };
+            window.cancelOrder = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'cancelled' }).eq('id', id); showToast('Заявка отменена'); loadAdminOrders(); };
             
             function showAmountSelector() {
                 const modal = document.createElement('div');
@@ -1014,11 +1097,36 @@
             }
             
             function showPaymentScreen(amount) {
+                currentSelectedAmount = amount;
                 const rubAmount = Math.floor(amount * getRate(amount));
                 const paymentCode = generatePaymentCode();
                 const modal = document.createElement('div');
                 modal.className = 'modal';
-                modal.innerHTML = `<div class="modal-content payment-modal"><div class="big-icon"><i class="fas fa-credit-card"></i></div><div style="font-size:11px;color:#9ca3af;"><i class="fas fa-ruble-sign"></i> К оплате</div><div class="payment-amount">${rubAmount} ₽</div><div style="font-size:11px;color:#6b7280;"><i class="fas fa-dollar-sign"></i> ${amount} USDT</div><div class="payment-code-block"><div class="label" style="font-size:10px;color:#f59e0b;"><i class="fas fa-key"></i> Код платежа</div><div class="payment-code-large">${paymentCode}</div><button class="btn btn-secondary compact-btn" id="copyCodeBtn" style="margin-top:8px;padding:6px;"><i class="fas fa-copy"></i> Скопировать</button></div><div class="small-text"><i class="fas fa-info-circle"></i> Укажите код в комментарии</div><button class="btn btn-warning compact-btn" id="payBillBtn" style="margin-top:10px;"><i class="fas fa-credit-card"></i> Оплатить счет</button><button class="btn btn-success compact-btn" id="simpleContinueBtn" style="margin-top:6px;"><i class="fas fa-check-circle"></i> Я оплатил(а)</button><button class="btn btn-secondary compact-btn" id="simpleCancelBtn" style="margin-top:6px;"><i class="fas fa-arrow-left"></i> Назад</button></div>`;
+                modal.innerHTML = `
+                    <div class="modal-content payment-modal">
+                        <div class="big-icon"><i class="fas fa-credit-card"></i></div>
+                        <div style="font-size:11px;color:#9ca3af;"><i class="fas fa-ruble-sign"></i> К оплате</div>
+                        <div class="payment-amount">${rubAmount} ₽</div>
+                        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;"><i class="fas fa-dollar-sign"></i> ${amount} USDT</div>
+                        
+                        <div class="warning-box">
+                            <div class="warning-title"><i class="fas fa-exclamation-triangle"></i> ВАЖНО!</div>
+                            <p><i class="fas fa-check-circle"></i> Оплатите <strong>ровно ${rubAmount} ₽</strong> — другую сумму не принимаем</p>
+                            <p><i class="fas fa-key"></i> Обязательно укажите код <strong>${paymentCode}</strong> в комментарии к платежу</p>
+                            <p><i class="fas fa-clock"></i> После оплаты нажмите "Я оплатил(а)" и укажите реквизиты</p>
+                        </div>
+                        
+                        <div class="payment-code-block">
+                            <div class="label" style="font-size:10px;color:#f59e0b;"><i class="fas fa-key"></i> Код платежа (обязателен!)</div>
+                            <div class="payment-code-large">${paymentCode}</div>
+                            <button class="btn btn-secondary compact-btn" id="copyCodeBtn" style="margin-top:8px;padding:6px;"><i class="fas fa-copy"></i> Скопировать код</button>
+                        </div>
+                        
+                        <button class="btn btn-warning compact-btn" id="payBillBtn" style="margin-top:10px;"><i class="fas fa-credit-card"></i> Оплатить счет</button>
+                        <button class="btn btn-success compact-btn" id="simpleContinueBtn" style="margin-top:6px;"><i class="fas fa-check-circle"></i> Я оплатил(а)</button>
+                        <button class="btn btn-secondary compact-btn" id="simpleCancelBtn" style="margin-top:6px;"><i class="fas fa-arrow-left"></i> Назад</button>
+                    </div>
+                `;
                 document.body.appendChild(modal);
                 document.getElementById('copyCodeBtn').onclick = () => copyToClipboard(paymentCode);
                 document.getElementById('payBillBtn').onclick = () => window.open(PAYMENT_LINK, '_blank');
@@ -1029,7 +1137,7 @@
             function showDetailsForm(amount, rubAmount, paymentCode) {
                 const modal = document.createElement('div');
                 modal.className = 'modal';
-                modal.innerHTML = `<div class="modal-content payment-modal"><i class="fas fa-user-check" style="font-size:36px;color:#c084fc;"></i><h3 style="margin:12px 0;font-size:16px;font-weight:700;">Куда перевести?</h3><div class="form-group" style="margin-bottom:12px;"><div class="form-label" style="font-size:11px;"><i class="fas fa-phone"></i> Номер телефона (СБП)</div><input type="tel" id="simplePhone" class="form-input" placeholder="+7 XXX XXX XX XX" style="padding:10px;font-size:14px;"></div><div class="form-group" style="margin-bottom:12px;"><div class="form-label" style="font-size:11px;"><i class="fas fa-university"></i> Банк получателя</div><div class="bank-select" id="simpleBankSelect" style="gap:6px;"><div class="bank-option" data-bank="Сбер" style="padding:8px;">Сбер</div><div class="bank-option" data-bank="Альфа" style="padding:8px;">Альфа</div><div class="bank-option" data-bank="Т-банк" style="padding:8px;">Т-банк</div><div class="bank-option" data-bank="ВТБ" style="padding:8px;">ВТБ</div></div></div><div style="background:rgba(168,85,247,0.1);border-radius:20px;padding:10px;margin:10px 0;display:flex;justify-content:space-between;"><span style="font-size:12px;"><i class="fas fa-ruble-sign"></i> Сумма:</span><span style="color:#c084fc;font-weight:700;font-size:16px;">${rubAmount} ₽</span></div><button class="btn compact-btn" id="simpleSubmitBtn" style="padding:10px;"><i class="fas fa-paper-plane"></i> Отправить заявку</button><button class="btn btn-secondary compact-btn" id="simpleBackBtn" style="margin-top:6px;padding:10px;"><i class="fas fa-arrow-left"></i> Назад</button></div>`;
+                modal.innerHTML = `<div class="modal-content payment-modal"><i class="fas fa-user-check" style="font-size:36px;color:#c084fc;"></i><h3 style="margin:12px 0;font-size:16px;font-weight:700;">Куда перевести USDT?</h3><div class="form-group" style="margin-bottom:12px;"><div class="form-label" style="font-size:11px;"><i class="fas fa-phone"></i> Номер телефона (СБП) для вывода</div><input type="tel" id="simplePhone" class="form-input" placeholder="+7 XXX XXX XX XX" style="padding:10px;font-size:14px;"></div><div class="form-group" style="margin-bottom:12px;"><div class="form-label" style="font-size:11px;"><i class="fas fa-university"></i> Банк получателя</div><div class="bank-select" id="simpleBankSelect" style="gap:6px;"><div class="bank-option" data-bank="Сбер" style="padding:8px;">Сбер</div><div class="bank-option" data-bank="Альфа" style="padding:8px;">Альфа</div><div class="bank-option" data-bank="Т-банк" style="padding:8px;">Т-банк</div><div class="bank-option" data-bank="ВТБ" style="padding:8px;">ВТБ</div></div></div><div style="background:rgba(168,85,247,0.1);border-radius:20px;padding:10px;margin:10px 0;display:flex;justify-content:space-between;"><span style="font-size:12px;"><i class="fas fa-ruble-sign"></i> Сумма:</span><span style="color:#c084fc;font-weight:700;font-size:16px;">${rubAmount} ₽</span></div><button class="btn compact-btn" id="simpleSubmitBtn" style="padding:10px;"><i class="fas fa-paper-plane"></i> Отправить заявку</button><button class="btn btn-secondary compact-btn" id="simpleBackBtn" style="margin-top:6px;padding:10px;"><i class="fas fa-arrow-left"></i> Назад</button></div>`;
                 document.body.appendChild(modal);
                 let selectedBank = 'Сбер';
                 document.querySelectorAll('#simpleBankSelect .bank-option').forEach(opt => { opt.onclick = () => { document.querySelectorAll('#simpleBankSelect .bank-option').forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); selectedBank = opt.dataset.bank; }; if (opt.dataset.bank === 'Сбер') opt.classList.add('selected'); });
@@ -1039,7 +1147,7 @@
                     const { error } = await supabaseClient.from('exchange_requests').insert([{ user_id: currentUser.id, username: currentUser.username || currentUser.first_name, amount_usd: amount, amount_rub: rubAmount, rate: getRate(amount), phone: phone, bank: selectedBank, secret_code: paymentCode, status: 'pending' }]);
                     if (error) { showToast('Ошибка: ' + error.message, true); return; }
                     modal.remove();
-                    showToast('Заявка создана! Ожидайте подтверждения');
+                    showToast('✅ Заявка создана! Оператор проверит оплату в ближайшее время');
                     loadMyOrders();
                     if (currentUser.id === ADMIN_ID) loadAdminOrders();
                 };
