@@ -29,11 +29,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         .splash-screen {
             position: fixed;
             top: 0;
@@ -252,6 +247,7 @@
             gap: 10px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: -0.2px;
+            width: 100%;
         }
 
         .btn:active {
@@ -270,6 +266,10 @@
 
         .btn-success {
             background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         .btn-group {
@@ -477,9 +477,9 @@
 
         .modal-content {
             background: #12121c;
-            border-radius: 36px;
-            padding: 28px 24px;
-            max-width: 360px;
+            border-radius: 32px;
+            padding: 20px;
+            max-width: 320px;
             width: 100%;
             text-align: center;
             border: 1px solid rgba(168, 85, 247, 0.2);
@@ -672,6 +672,139 @@
             background: #a855f7;
             border-radius: 4px;
         }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-buttons .btn {
+            margin: 0;
+        }
+
+        .copy-number {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .copy-number span {
+            font-family: monospace;
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .copy-number button {
+            background: #10b981;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-number button:active {
+            transform: scale(0.95);
+        }
+
+        .admin-panel-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .admin-panel-buttons button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .admin-panel-buttons button.active {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-color: transparent;
+        }
+
+        /* Компактное модальное окно оплаты */
+        .payment-modal {
+            text-align: center;
+            padding: 16px !important;
+        }
+        .payment-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #c084fc;
+            margin: 10px 0;
+            letter-spacing: -1px;
+        }
+        .payment-code-block {
+            background: #0a0a14;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 12px 0;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+        .payment-code-block .label {
+            font-size: 10px;
+            color: #f59e0b;
+            margin-bottom: 6px;
+        }
+        .payment-code-large {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-family: monospace;
+            color: #c084fc;
+            word-break: break-all;
+        }
+        .big-icon {
+            font-size: 40px;
+            margin-bottom: 6px;
+            color: #c084fc;
+        }
+        .simple-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .simple-row:last-child {
+            border-bottom: none;
+        }
+        .phone-input-large {
+            font-size: 16px;
+            text-align: center;
+            padding: 12px;
+        }
+        .compact-btn {
+            padding: 10px !important;
+            font-size: 13px !important;
+            margin-top: 6px !important;
+        }
+        .compact-margin {
+            margin-top: 8px !important;
+        }
+        .small-text {
+            font-size: 10px;
+            margin-top: 6px;
+        }
     </style>
 </head>
 <body>
@@ -692,7 +825,7 @@
         <div class="header">
             <h1>JANGEL 3.1</h1>
             <div class="welcome-text">
-                Добро пожаловать дорогой и уважаемый пользователь! Мы ради приветствовать тебя.<br>
+                <i class="fas fa-hand-wave"></i> Добро пожаловать дорогой и уважаемый пользователь! Мы ради приветствовать тебя.<br>
                 На связи: <span>@JANGEL_3_1</span>
             </div>
         </div>
@@ -730,21 +863,20 @@
                     </div>
                 </div>
 
-                <div class="btn-group">
-                    <button class="btn" id="contactBtn">
-                        <i class="fab fa-telegram"></i>
-                        Связаться
-                    </button>
+                <div class="action-buttons">
                     <button class="btn" id="exchangeBtn">
                         <i class="fas fa-exchange-alt"></i>
                         Обменять USDT
                     </button>
+                    <button class="btn btn-secondary" id="chatServiceBtn">
+                        <i class="fas fa-comments"></i>
+                        Чат услуг
+                    </button>
+                    <button class="btn" id="contactBtn">
+                        <i class="fab fa-telegram"></i>
+                        Связаться
+                    </button>
                 </div>
-
-                <button class="btn btn-secondary" id="chatServiceBtn">
-                    <i class="fas fa-comments"></i>
-                    Чат услуг
-                </button>
 
                 <div class="reputation-block">
                     <i class="fas fa-star" style="color: #fbbf24; font-size: 12px;"></i>
@@ -763,7 +895,7 @@
                     Мои заявки
                 </div>
                 <div id="myOrdersList">
-                    <div class="info-text">Загрузка...</div>
+                    <div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div>
                 </div>
             </div>
         </div>
@@ -774,8 +906,23 @@
                     <i class="fas fa-crown"></i>
                     Админ панель
                 </div>
-                <div id="adminOrdersList">
-                    <div class="info-text">Загрузка...</div>
+                
+                <div class="admin-panel-buttons">
+                    <button id="adminOrdersBtn" class="active"><i class="fas fa-clipboard-list"></i> Заявки</button>
+                    <button id="adminRecipientsBtn"><i class="fas fa-credit-card"></i> Реквизиты</button>
+                </div>
+                
+                <div id="adminOrdersSection">
+                    <div id="adminOrdersList">
+                        <div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div>
+                    </div>
+                </div>
+                
+                <div id="adminRecipientsSection" style="display: none;">
+                    <div class="info-text" style="margin-bottom: 16px;">
+                        <i class="fas fa-info-circle"></i> Нажмите на номер, чтобы скопировать
+                    </div>
+                    <div id="recipientsList"></div>
                 </div>
             </div>
         </div>
@@ -799,16 +946,16 @@
                     <i class="fas fa-gift"></i>
                     Интуитивный подарок
                 </div>
-                <div class="bear-icon">🧸</div>
+                <div class="bear-icon"><i class="fas fa-bear"></i></div>
                 <div class="info-text">
-                    Оставляй отзыв в проверенных чатах и получай<br>
-                    <strong>плюшевого мишку Telegram</strong> в подарок!
+                    <i class="fas fa-comment-dots"></i> Оставляй отзыв в проверенных чатах и получай<br>
+                    <strong><i class="fas fa-gift"></i> плюшевого мишку Telegram</strong> в подарок!
                 </div>
                 <div class="chat-list">
-                    <span>Jess</span>
-                    <span>FRK</span>
-                    <span>OLD</span>
-                    <span>Вера Отзывы</span>
+                    <span><i class="fab fa-telegram"></i> Jess</span>
+                    <span><i class="fab fa-telegram"></i> FRK</span>
+                    <span><i class="fab fa-telegram"></i> OLD</span>
+                    <span><i class="fab fa-telegram"></i> Вера Отзывы</span>
                 </div>
                 <div class="info-text" style="margin-top: 12px;">
                     <i class="fas fa-info-circle"></i> После отзыва напиши мне — отправлю мишку
@@ -864,10 +1011,7 @@
             
             let currentUser = null;
             const ADMIN_ID = 8155919358;
-            let selectedBank = 'Сбер';
-            let pendingAmount = null;
-            let pendingRub = null;
-            let pendingCode = null;
+            const PAYMENT_LINK = 'https://t.me/send?start=IVbPoRLGan1F';
             
             function getRate(amount) {
                 if (amount < 7) return 76;
@@ -898,182 +1042,46 @@
                 const toast = document.createElement('div');
                 toast.className = 'toast';
                 toast.style.background = isError ? '#ef4444' : '#10b981';
-                toast.innerText = msg;
+                toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${msg}`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             }
             
-            function showAmountSelector() {
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <i class="fas fa-dollar-sign" style="font-size: 44px; color: #c084fc;"></i>
-                        <h3 style="margin: 20px 0 16px; font-size: 20px;">Выберите сумму USDT</h3>
-                        <div class="amount-selector" id="amountSelector">
-                            <div class="amount-option" data-amount="10">10 USDT</div>
-                            <div class="amount-option" data-amount="20">20 USDT</div>
-                            <div class="amount-option" data-amount="50">50 USDT</div>
-                            <div class="amount-option" data-amount="100">100 USDT</div>
-                            <div class="amount-option" data-amount="200">200 USDT</div>
-                            <div class="amount-option" data-amount="500">500 USDT</div>
-                        </div>
-                        <div class="form-group" style="margin-top: 16px;">
-                            <input type="number" id="customAmount" class="form-input" placeholder="Или введите свою сумму">
-                        </div>
-                        <button class="btn" id="proceedToPaymentBtn" style="margin-top: 20px;">Далее</button>
-                        <button class="btn btn-secondary" id="closeAmountBtn" style="margin-top: 10px;">Отмена</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-                
-                let selectedAmountValue = null;
-                
-                document.querySelectorAll('.amount-option').forEach(opt => {
-                    opt.onclick = () => {
-                        document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected'));
-                        opt.classList.add('selected');
-                        selectedAmountValue = parseInt(opt.dataset.amount);
-                        document.getElementById('customAmount').value = '';
-                    };
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Номер скопирован: ' + text);
+                }).catch(() => {
+                    showToast('Не удалось скопировать', true);
                 });
-                
-                document.getElementById('customAmount').oninput = (e) => {
-                    document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected'));
-                    selectedAmountValue = parseInt(e.target.value);
-                };
-                
-                document.getElementById('proceedToPaymentBtn').onclick = () => {
-                    if (!selectedAmountValue || selectedAmountValue < 7) {
-                        showToast('Минимальная сумма 7 USDT', true);
-                        return;
-                    }
-                    modal.remove();
-                    showPaymentScreen(selectedAmountValue);
-                };
-                
-                document.getElementById('closeAmountBtn').onclick = () => modal.remove();
             }
             
-            function showPaymentScreen(amount) {
-                const rubAmount = Math.floor(amount * getRate(amount));
-                const paymentCode = generatePaymentCode();
-                pendingAmount = amount;
-                pendingRub = rubAmount;
-                pendingCode = paymentCode;
+            async function loadRecipients() {
+                const { data, error } = await supabaseClient
+                    .from('recipients')
+                    .select('*')
+                    .order('created_at', { ascending: false });
                 
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <i class="fas fa-credit-card" style="font-size: 44px; color: #c084fc;"></i>
-                        <h3 style="margin: 20px 0 12px; font-size: 20px;">Оплата счета</h3>
-                        <div style="background: #0a0a14; padding: 20px; border-radius: 24px; margin: 16px 0;">
-                            <p style="font-size: 13px; color: #9ca3af;">Сумма к оплате:</p>
-                            <p style="font-size: 36px; font-weight: 800; color: #c084fc;">${rubAmount} ₽</p>
-                            <p style="font-size: 12px; color: #6b7280; margin-top: 8px;">${amount} USDT по курсу ${getRate(amount)}₽</p>
-                        </div>
-                        <div style="background: rgba(168, 85, 247, 0.1); padding: 16px; border-radius: 20px; margin: 16px 0;">
-                            <p style="font-size: 12px; color: #c084fc; margin-bottom: 8px;"><i class="fas fa-key"></i> Уникальный код оплаты:</p>
-                            <div class="secret-code" style="font-size: 20px; letter-spacing: 2px;">${paymentCode}</div>
-                            <p style="font-size: 11px; color: #f59e0b; margin-top: 8px;">
-                                <i class="fas fa-exclamation-triangle"></i> Обязательно укажите этот код в комментарии к платежу!
-                            </p>
-                        </div>
-                        <a href="https://t.me/send?start=IVbPoRLGan1F" target="_blank" class="btn" id="payNowBtn" style="text-decoration: none; display: flex; margin: 8px 0;">
-                            <i class="fab fa-telegram"></i>
-                            Оплатить счёт
-                        </a>
-                        <div class="info-text" style="margin-top: 12px;">
-                            После оплаты нажмите "Продолжить"
-                        </div>
-                        <button class="btn btn-secondary" id="continueAfterPayBtn" style="margin-top: 8px;">Продолжить</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
+                const container = document.getElementById('recipientsList');
+                if (!container) return;
                 
-                document.getElementById('continueAfterPayBtn').onclick = () => {
-                    modal.remove();
-                    showDetailsForm(amount, rubAmount, paymentCode);
-                };
-            }
-            
-            function showDetailsForm(amount, rubAmount, paymentCode) {
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <i class="fas fa-user-check" style="font-size: 44px; color: #c084fc;"></i>
-                        <h3 style="margin: 20px 0 16px; font-size: 20px;">Реквизиты для вывода</h3>
-                        <div class="form-group">
-                            <div class="form-label"><i class="fas fa-phone"></i> Номер телефона (СБП)</div>
-                            <input type="tel" id="phoneInputModal" class="form-input" placeholder="+7 XXX XXX XX XX">
-                        </div>
-                        <div class="form-group">
-                            <div class="form-label"><i class="fas fa-university"></i> Банк получателя</div>
-                            <div class="bank-select" id="bankSelectModal">
-                                <div class="bank-option" data-bank="Сбер">Сбер</div>
-                                <div class="bank-option" data-bank="Альфа">Альфа</div>
-                                <div class="bank-option" data-bank="Т-банк">Т-банк</div>
-                                <div class="bank-option" data-bank="ВТБ">ВТБ</div>
+                if (error || !data || data.length === 0) {
+                    container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет добавленных реквизитов</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(recipient => `
+                    <div class="copy-number">
+                        <div style="flex: 1;">
+                            <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">
+                                <i class="fas fa-university"></i> ${recipient.bank || 'Банк'}
                             </div>
+                            <span>${recipient.account_number}</span>
                         </div>
-                        <div class="info-text" style="margin: 12px 0;">
-                            <i class="fas fa-info-circle"></i> Сумма: ${rubAmount} ₽ (${amount} USDT)
-                        </div>
-                        <button class="btn" id="finalExchangeBtn">Произвести обмен</button>
-                        <button class="btn btn-secondary" id="closeFinalBtn">Отмена</button>
+                        <button onclick="window.copyToClipboard('${recipient.account_number}')">
+                            <i class="fas fa-copy"></i> Копировать
+                        </button>
                     </div>
-                `;
-                document.body.appendChild(modal);
-                
-                let selectedBankModal = 'Сбер';
-                document.querySelectorAll('#bankSelectModal .bank-option').forEach(opt => {
-                    opt.onclick = () => {
-                        document.querySelectorAll('#bankSelectModal .bank-option').forEach(o => o.classList.remove('selected'));
-                        opt.classList.add('selected');
-                        selectedBankModal = opt.dataset.bank;
-                    };
-                    if (opt.dataset.bank === 'Сбер') opt.classList.add('selected');
-                });
-                
-                document.getElementById('finalExchangeBtn').onclick = async () => {
-                    const phone = document.getElementById('phoneInputModal').value.trim();
-                    if (!phone) {
-                        showToast('Введите номер телефона', true);
-                        return;
-                    }
-                    
-                    const { error } = await supabaseClient
-                        .from('exchange_requests')
-                        .insert([{
-                            user_id: currentUser.id,
-                            username: currentUser.username || currentUser.first_name || 'User',
-                            amount_usd: amount,
-                            amount_rub: rubAmount,
-                            rate: getRate(amount),
-                            phone: phone,
-                            bank: selectedBankModal,
-                            secret_code: paymentCode,
-                            status: 'pending'
-                        }]);
-                    
-                    if (error) {
-                        console.error(error);
-                        showToast('Ошибка: ' + error.message, true);
-                        return;
-                    }
-                    
-                    modal.remove();
-                    showToast('Заявка создана! Ожидайте подтверждения');
-                    loadMyOrders();
-                    
-                    if (currentUser.id === ADMIN_ID) {
-                        loadAdminOrders();
-                    }
-                };
-                
-                document.getElementById('closeFinalBtn').onclick = () => modal.remove();
+                `).join('');
             }
             
             async function loadMyOrders() {
@@ -1101,10 +1109,10 @@
                 };
                 
                 const statusIcon = {
-                    pending: '🟡',
-                    paid: '🔵',
-                    completed: '🟢',
-                    cancelled: '🔴'
+                    pending: '<i class="fas fa-clock"></i>',
+                    paid: '<i class="fas fa-check-circle"></i>',
+                    completed: '<i class="fas fa-check-double"></i>',
+                    cancelled: '<i class="fas fa-times-circle"></i>'
                 };
                 
                 container.innerHTML = data.map(order => `
@@ -1142,7 +1150,7 @@
                     <div class="admin-request">
                         <div class="request-header">
                             <span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0, 8)}</span>
-                            <span class="request-status">${order.status === 'pending' ? '🟡 Ожидает' : '🔵 Оплачено'}</span>
+                            <span class="request-status">${order.status === 'pending' ? '<i class="fas fa-hourglass-half"></i> Ожидает' : '<i class="fas fa-check-circle"></i> Оплачено'}</span>
                         </div>
                         <div class="request-details">
                             <i class="fas fa-user"></i> <strong>${order.username}</strong> (${order.user_id})<br>
@@ -1164,6 +1172,189 @@
                 `).join('');
             }
             
+            function showAmountSelector() {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <i class="fas fa-dollar-sign" style="font-size: 40px; color: #c084fc;"></i>
+                        <h3 style="margin: 12px 0 16px; font-size: 18px;">Выберите сумму USDT</h3>
+                        <div class="amount-selector" id="amountSelector" style="margin: 12px 0;">
+                            <div class="amount-option" data-amount="10">10 USDT</div>
+                            <div class="amount-option" data-amount="20">20 USDT</div>
+                            <div class="amount-option" data-amount="50">50 USDT</div>
+                            <div class="amount-option" data-amount="100">100 USDT</div>
+                            <div class="amount-option" data-amount="200">200 USDT</div>
+                            <div class="amount-option" data-amount="500">500 USDT</div>
+                        </div>
+                        <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
+                            <input type="number" id="customAmount" class="form-input" placeholder="Или введите свою сумму" style="padding: 12px;">
+                        </div>
+                        <button class="btn" id="proceedToPaymentBtn" style="margin-top: 8px; padding: 12px;"><i class="fas fa-arrow-right"></i> Далее</button>
+                        <button class="btn btn-secondary" id="closeAmountBtn" style="margin-top: 8px; padding: 12px;"><i class="fas fa-times"></i> Отмена</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                let selectedAmountValue = null;
+                
+                document.querySelectorAll('.amount-option').forEach(opt => {
+                    opt.onclick = () => {
+                        document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected'));
+                        opt.classList.add('selected');
+                        selectedAmountValue = parseInt(opt.dataset.amount);
+                        document.getElementById('customAmount').value = '';
+                    };
+                });
+                
+                document.getElementById('customAmount').oninput = (e) => {
+                    document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected'));
+                    selectedAmountValue = parseInt(e.target.value);
+                };
+                
+                document.getElementById('proceedToPaymentBtn').onclick = () => {
+                    if (!selectedAmountValue || selectedAmountValue < 7) {
+                        showToast('Минимальная сумма 7 USDT', true);
+                        return;
+                    }
+                    modal.remove();
+                    showSimplePaymentScreen(selectedAmountValue);
+                };
+                
+                document.getElementById('closeAmountBtn').onclick = () => modal.remove();
+            }
+            
+            function showSimplePaymentScreen(amount) {
+                const rubAmount = Math.floor(amount * getRate(amount));
+                const paymentCode = generatePaymentCode();
+                
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content payment-modal">
+                        <div class="big-icon"><i class="fas fa-credit-card"></i></div>
+                        <div style="font-size: 11px; color: #9ca3af;"><i class="fas fa-ruble-sign"></i> К оплате</div>
+                        <div class="payment-amount">${rubAmount} ₽</div>
+                        <div style="font-size: 11px; color: #6b7280;"><i class="fas fa-dollar-sign"></i> ${amount} USDT</div>
+                        
+                        <div class="payment-code-block">
+                            <div class="label"><i class="fas fa-key"></i> Код платежа</div>
+                            <div class="payment-code-large">${paymentCode}</div>
+                            <button class="btn btn-secondary compact-btn" id="copyCodeBtn" style="margin-top: 8px; padding: 6px; font-size: 11px;"><i class="fas fa-copy"></i> Скопировать</button>
+                        </div>
+                        
+                        <div class="small-text">
+                            <i class="fas fa-info-circle"></i> Укажите код в комментарии
+                        </div>
+                        
+                        <button class="btn btn-warning compact-btn" id="payBillBtn" style="margin-top: 10px;"><i class="fas fa-credit-card"></i> Оплатить счет</button>
+                        <button class="btn btn-success compact-btn" id="simpleContinueBtn" style="margin-top: 6px;"><i class="fas fa-check-circle"></i> Я оплатил(а)</button>
+                        <button class="btn btn-secondary compact-btn" id="simpleCancelBtn" style="margin-top: 6px;"><i class="fas fa-arrow-left"></i> Назад</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                document.getElementById('copyCodeBtn').onclick = () => {
+                    copyToClipboard(paymentCode);
+                };
+                
+                document.getElementById('payBillBtn').onclick = () => {
+                    window.open(PAYMENT_LINK, '_blank');
+                };
+                
+                document.getElementById('simpleContinueBtn').onclick = () => {
+                    modal.remove();
+                    showSimpleDetailsForm(amount, rubAmount, paymentCode);
+                };
+                document.getElementById('simpleCancelBtn').onclick = () => modal.remove();
+            }
+            
+            function showSimpleDetailsForm(amount, rubAmount, paymentCode) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content payment-modal">
+                        <i class="fas fa-user-check" style="font-size: 36px; color: #c084fc;"></i>
+                        <h3 style="margin: 12px 0; font-size: 16px;">Куда перевести?</h3>
+                        
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <div class="form-label" style="font-size: 11px;"><i class="fas fa-phone"></i> Номер телефона (СБП)</div>
+                            <input type="tel" id="simplePhone" class="form-input phone-input-large" placeholder="+7 XXX XXX XX XX" style="padding: 10px; font-size: 14px;">
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <div class="form-label" style="font-size: 11px;"><i class="fas fa-university"></i> Банк получателя</div>
+                            <div class="bank-select" id="simpleBankSelect" style="gap: 6px;">
+                                <div class="bank-option" data-bank="Сбер" style="padding: 8px; font-size: 12px;">Сбер</div>
+                                <div class="bank-option" data-bank="Альфа" style="padding: 8px; font-size: 12px;">Альфа</div>
+                                <div class="bank-option" data-bank="Т-банк" style="padding: 8px; font-size: 12px;">Т-банк</div>
+                                <div class="bank-option" data-bank="ВТБ" style="padding: 8px; font-size: 12px;">ВТБ</div>
+                            </div>
+                        </div>
+                        
+                        <div class="simple-row" style="background: rgba(168,85,247,0.1); border-radius: 16px; padding: 8px; margin: 10px 0;">
+                            <span style="font-size: 12px;"><i class="fas fa-ruble-sign"></i> Сумма:</span>
+                            <span style="color: #c084fc; font-weight: 700; font-size: 14px;">${rubAmount} ₽</span>
+                        </div>
+                        
+                        <button class="btn compact-btn" id="simpleSubmitBtn" style="padding: 10px;"><i class="fas fa-paper-plane"></i> Отправить заявку</button>
+                        <button class="btn btn-secondary compact-btn" id="simpleBackBtn" style="margin-top: 6px; padding: 10px;"><i class="fas fa-arrow-left"></i> Назад</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                let selectedBank = 'Сбер';
+                document.querySelectorAll('#simpleBankSelect .bank-option').forEach(opt => {
+                    opt.onclick = () => {
+                        document.querySelectorAll('#simpleBankSelect .bank-option').forEach(o => o.classList.remove('selected'));
+                        opt.classList.add('selected');
+                        selectedBank = opt.dataset.bank;
+                    };
+                    if (opt.dataset.bank === 'Сбер') opt.classList.add('selected');
+                });
+                
+                document.getElementById('simpleSubmitBtn').onclick = async () => {
+                    const phone = document.getElementById('simplePhone').value.trim();
+                    if (!phone) {
+                        showToast('Введите номер телефона', true);
+                        return;
+                    }
+                    
+                    const { error } = await supabaseClient
+                        .from('exchange_requests')
+                        .insert([{
+                            user_id: currentUser.id,
+                            username: currentUser.username || currentUser.first_name || 'User',
+                            amount_usd: amount,
+                            amount_rub: rubAmount,
+                            rate: getRate(amount),
+                            phone: phone,
+                            bank: selectedBank,
+                            secret_code: paymentCode,
+                            status: 'pending'
+                        }]);
+                    
+                    if (error) {
+                        console.error(error);
+                        showToast('Ошибка: ' + error.message, true);
+                        return;
+                    }
+                    
+                    modal.remove();
+                    showToast('Заявка создана! Ожидайте подтверждения');
+                    loadMyOrders();
+                    
+                    if (currentUser.id === ADMIN_ID) {
+                        loadAdminOrders();
+                    }
+                };
+                
+                document.getElementById('simpleBackBtn').onclick = () => {
+                    modal.remove();
+                    showSimplePaymentScreen(amount);
+                };
+            }
+            
             const prefixes = [
                 { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
                 { name: '@duba_t', desc: 'скупает Макс (объём)' }
@@ -1174,7 +1365,7 @@
                 if (!container) return;
                 container.innerHTML = prefixes.map(p => `
                     <div class="prefix-item" onclick="window.open('https://t.me/${p.name.replace('@', '')}', '_blank')">
-                        <i class="fas fa-at"></i>
+                        <i class="fab fa-telegram"></i>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-family: monospace;">${p.name}</div>
                             <div style="font-size: 11px; color: #9ca3af;">${p.desc}</div>
@@ -1186,50 +1377,8 @@
             
             function loadRules() {
                 const rulesHTML = `
-                    <div class="rules-section">
-                        <h4><i class="fas fa-gavel"></i> 1. Общие положения</h4>
-                        <p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил и обязуется соблюдать их в полном объёме.</p>
-                        <p>1.2 Срок подачи апелляции на наказание, которое пользователь считает несправедливым, не должен превышать 48 часов с момента его получения. Апелляции, поданные по истечении данного срока, рассмотрению не подлежат.</p>
-                        <p>1.3 Администрация проекта Ja Angel не несёт ответственности за фейковые аккаунты и не обязана возмещать пользователю утраченные средства, ценности или иные ресурсы, возникшие в результате сделок между участниками. Исключение составляют случаи, связанные с официальным депозитом, размещённым в переходнике или в био чата, при условии предоставления полных и подтверждённых доказательств.</p>
-                        <p>1.4 Пользователь несёт личную ответственность перед участниками сделки за действия третьих лиц, включая случаи, когда такие действия приводят к нарушению прав и законных интересов сторон. В подобных ситуациях наказания могут применяться как к участнику сделки, так и к третьему лицу.</p>
-                        <p>1.5 Незнание настоящих правил не освобождает пользователя от ответственности.</p>
-                    </div>
-                    <div class="rules-section">
-                        <h4><i class="fas fa-ban"></i> 2. Нарушения и меры наказания</h4>
-                        <p>2.1 Наличие подтверждённых доказательств скама, попыток обмана, введения в заблуждение пользователей или администрации проекта. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p>
-                        <p>2.2 Запрещена реклама, привлечение, перегон или переманивание участников любыми способами без предварительного согласования с руководством проекта. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p>
-                        <p>2.3 Угрозы жизни и здоровью, а также взаимодействие с подозрительными лицами. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p>
-                        <p>2.4 Категорически запрещено оставлять отзывы, которые не соответствуют действительности, искажают факты либо вводят в заблуждение пользователей. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p>
-                        <p>2.5 Оскорбление участников проекта. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 24 часа.</span></p>
-                        <p>2.6 Предложения любых видов азартных игр на деньги в чате. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 24 часа.</span></p>
-                        <p>2.7 Отметка администрации в случае игнорирования личных сообщений в течение 24 часов. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 5 часов.</span></p>
-                        <p>2.8 Обмен и покупка USDT запрещена. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p>
-                    </div>
-                    <div class="rules-section">
-                        <h4><i class="fas fa-scale-balanced"></i> 3. Споры и разрешение конфликтов</h4>
-                        <p>3.1 В случае возникновения спорных ситуаций стороны обязаны предоставить администрации полные и достоверные доказательства (скриншоты переписок, чеки, ссылки и иные материалы).</p>
-                        <p>3.2 Администрация проекта Ja Angel выступает в роли независимой стороны и принимает решение на основании предоставленных доказательств. Решение администрации является окончательным и обязательным к исполнению.</p>
-                        <p>3.3 Споры без предоставления доказательств либо с поддельными материалами рассмотрению не подлежат.</p>
-                        <p>3.4 Попытка давления на администрацию, манипуляций или введения в заблуждение в процессе разбирательства приравнивается к нарушению правил. <span class="punishment"><i class="fas fa-gavel"></i> Наказание: мут или бан (на усмотрение администрации).</span></p>
-                    </div>
-                    <div class="rules-section">
-                        <h4><i class="fas fa-chart-line"></i> 4. Депозиты и финансовые обязательства</h4>
-                        <p>4.1 Официальным депозитом считается только депозит, переданный через реквизиты, указанные администрацией, размещённые в переходнике или био чата проекта Ja Angel.</p>
-                        <p>4.2 Администрация не несёт ответственности за депозиты и финансовые операции, совершённые вне официальных каналов проекта.</p>
-                        <p>4.3 Возврат депозита возможен исключительно при наличии подтверждённых доказательств нарушения условий сделки со стороны одного из участников и только после рассмотрения администрацией.</p>
-                        <p>4.4 Срок рассмотрения депозитных споров может составлять до 72 часов с момента предоставления полного пакета доказательств.</p>
-                    </div>
-                    <div class="rules-section">
-                        <h4><i class="fas fa-user-shield"></i> 5. Роль и полномочия администрации</h4>
-                        <p>5.1 Администрация проекта Ja Angel имеет право: выдавать наказания в рамках настоящих правил; запрашивать дополнительные доказательства; принимать решения в спорных и нестандартных ситуациях; удалять контент, нарушающий правила проекта.</p>
-                        <p>5.2 Администрация вправе не раскрывать внутренние процессы принятия решений и может отказать в комментариях без объяснения причин.</p>
-                        <p>5.3 Неуважительное общение с администрацией, давление или попытки подрыва её авторитета рассматриваются как нарушение правил. <span class="punishment"><i class="fas fa-gavel"></i> Наказание: мут или бан (на усмотрение администрации).</span></p>
-                    </div>
-                    <div class="rules-section">
-                        <h4><i class="fas fa-file-signature"></i> 6. Заключительные положения</h4>
-                        <p>6.1 Администрация проекта оставляет за собой право изменять и дополнять настоящий свод правил без предварительного уведомления пользователей.</p>
-                        <p>6.2 Актуальная версия правил считается действующей с момента публикации. Пользователи обязаны самостоятельно отслеживать обновления.</p>
-                    </div>
+                    <div class="rules-section"><h4><i class="fas fa-gavel"></i> 1. Общие положения</h4><p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил и обязуется соблюдать их в полном объёме.</p><p>1.2 Срок подачи апелляции на наказание, которое пользователь считает несправедливым, не должен превышать 48 часов с момента его получения. Апелляции, поданные по истечении данного срока, рассмотрению не подлежат.</p><p>1.3 Администрация проекта Ja Angel не несёт ответственности за фейковые аккаунты и не обязана возмещать пользователю утраченные средства, ценности или иные ресурсы, возникшие в результате сделок между участниками. Исключение составляют случаи, связанные с официальным депозитом, размещённым в переходнике или в био чата, при условии предоставления полных и подтверждённых доказательств.</p><p>1.4 Пользователь несёт личную ответственность перед участниками сделки за действия третьих лиц, включая случаи, когда такие действия приводят к нарушению прав и законных интересов сторон. В подобных ситуациях наказания могут применяться как к участнику сделки, так и к третьему лицу.</p><p>1.5 Незнание настоящих правил не освобождает пользователя от ответственности.</p></div>
+                    <div class="rules-section"><h4><i class="fas fa-ban"></i> 2. Нарушения и меры наказания</h4><p>2.1 Наличие подтверждённых доказательств скама, попыток обмана, введения в заблуждение пользователей или администрации проекта. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.2 Запрещена реклама, привлечение, перегон или переманивание участников любыми способами без предварительного согласования с руководством проекта. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.3 Угрозы жизни и здоровью, а также взаимодействие с подозрительными лицами. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.4 Категорически запрещено оставлять отзывы, которые не соответствуют действительности, искажают факты либо вводят в заблуждение пользователей. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.5 Оскорбление участников проекта. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 24 часа.</span></p><p>2.6 Предложения любых видов азартных игр на деньги в чате. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 24 часа.</span></p><p>2.7 Отметка администрации в случае игнорирования личных сообщений в течение 24 часов. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 5 часов.</span></p><p>2.8 Обмен и покупка USDT запрещена. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p></div>
                 `;
                 document.getElementById('rulesContent').innerHTML = rulesHTML;
             }
@@ -1249,7 +1398,14 @@
                     if (navEl) navEl.classList.add('active');
                     
                     if (panel === 'myOrders') loadMyOrders();
-                    if (panel === 'admin') loadAdminOrders();
+                    if (panel === 'admin') {
+                        loadAdminOrders();
+                        loadRecipients();
+                        document.getElementById('adminOrdersBtn').classList.add('active');
+                        document.getElementById('adminRecipientsBtn').classList.remove('active');
+                        document.getElementById('adminOrdersSection').style.display = 'block';
+                        document.getElementById('adminRecipientsSection').style.display = 'none';
+                    }
                 };
                 
                 document.getElementById('navExchange').onclick = () => setActive('exchange');
@@ -1259,6 +1415,31 @@
                 document.getElementById('navRules').onclick = () => setActive('rules');
                 
                 window.setActive = setActive;
+            }
+            
+            function setupAdminTabs() {
+                const adminOrdersBtn = document.getElementById('adminOrdersBtn');
+                const adminRecipientsBtn = document.getElementById('adminRecipientsBtn');
+                const adminOrdersSection = document.getElementById('adminOrdersSection');
+                const adminRecipientsSection = document.getElementById('adminRecipientsSection');
+                
+                if (adminOrdersBtn && adminRecipientsBtn) {
+                    adminOrdersBtn.onclick = () => {
+                        adminOrdersBtn.classList.add('active');
+                        adminRecipientsBtn.classList.remove('active');
+                        adminOrdersSection.style.display = 'block';
+                        adminRecipientsSection.style.display = 'none';
+                        loadAdminOrders();
+                    };
+                    
+                    adminRecipientsBtn.onclick = () => {
+                        adminRecipientsBtn.classList.add('active');
+                        adminOrdersBtn.classList.remove('active');
+                        adminOrdersSection.style.display = 'none';
+                        adminRecipientsSection.style.display = 'block';
+                        loadRecipients();
+                    };
+                }
             }
             
             window.markPaid = async (id) => {
@@ -1294,6 +1475,8 @@
                 }
             };
             
+            window.copyToClipboard = copyToClipboard;
+            
             async function init() {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     currentUser = tg.initDataUnsafe.user;
@@ -1320,13 +1503,13 @@
                 loadPrefixes();
                 loadRules();
                 setupNav();
+                setupAdminTabs();
                 
                 if (currentUser.id === ADMIN_ID) {
                     const floatingBtn = document.getElementById('floatingAdmin');
                     floatingBtn.style.display = 'flex';
                     floatingBtn.onclick = () => {
                         window.setActive('admin');
-                        loadAdminOrders();
                     };
                 }
                 
