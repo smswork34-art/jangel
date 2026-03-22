@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Jangel 3.1 | Обмен</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,6 +14,7 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            touch-action: pan-x pan-y; /* запрещает зум, но позволяет скролл */
         }
 
         body {
@@ -22,6 +23,7 @@
             min-height: 100vh;
             color: #ffffff;
             line-height: 1.4;
+            touch-action: pan-x pan-y;
         }
 
         @keyframes fadeIn {
@@ -189,7 +191,6 @@
             padding: 20px;
             margin-bottom: 16px;
             border: 1px solid rgba(168, 85, 247, 0.12);
-            transition: transform 0.2s ease;
         }
 
         .card-title {
@@ -229,7 +230,6 @@
             font-size: 18px;
             font-weight: 700;
             color: #c084fc;
-            letter-spacing: -0.2px;
         }
 
         .btn {
@@ -245,14 +245,12 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: -0.2px;
+            transition: all 0.2s;
             width: 100%;
         }
 
         .btn:active {
             transform: scale(0.97);
-            opacity: 0.9;
         }
 
         .btn-secondary {
@@ -260,26 +258,16 @@
             border: 1px solid rgba(168, 85, 247, 0.3);
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
         .btn-success {
             background: linear-gradient(135deg, #10b981, #059669);
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
         .btn-warning {
             background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .btn-group .btn {
-            flex: 1;
         }
 
         .info-text {
@@ -290,7 +278,6 @@
             padding: 10px;
             background: rgba(168, 85, 247, 0.08);
             border-radius: 20px;
-            letter-spacing: 0.2px;
         }
 
         .reputation-block {
@@ -301,24 +288,11 @@
             border-radius: 48px;
         }
 
-        .reputation-block span {
-            color: #c084fc;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
         .calculator {
             background: rgba(30, 30, 42, 0.5);
             border-radius: 24px;
             padding: 20px;
             margin: 20px 0;
-        }
-
-        .calc-label {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 12px;
-            font-weight: 500;
         }
 
         .calc-input {
@@ -332,12 +306,6 @@
             font-weight: 600;
             text-align: center;
             outline: none;
-            transition: all 0.2s;
-        }
-
-        .calc-input:focus {
-            border-color: #c084fc;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
         }
 
         .calc-result {
@@ -352,7 +320,6 @@
             font-size: 32px;
             font-weight: 800;
             color: #c084fc;
-            letter-spacing: -0.5px;
         }
 
         .form-group {
@@ -364,7 +331,6 @@
             color: #9ca3af;
             margin-bottom: 8px;
             display: block;
-            font-weight: 500;
         }
 
         .form-input {
@@ -376,12 +342,10 @@
             color: white;
             font-size: 15px;
             outline: none;
-            transition: all 0.2s;
         }
 
         .form-input:focus {
             border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
         }
 
         .bank-select {
@@ -398,9 +362,7 @@
             padding: 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 14px;
-            font-weight: 500;
         }
 
         .bank-option.selected {
@@ -423,9 +385,7 @@
             padding: 14px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
             font-weight: 600;
-            font-size: 15px;
         }
 
         .amount-option.selected {
@@ -447,16 +407,10 @@
             cursor: pointer;
             z-index: 200;
             box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .floating-admin:active {
             transform: scale(0.92);
-        }
-
-        .floating-admin i {
-            font-size: 24px;
-            color: white;
         }
 
         .modal {
@@ -472,7 +426,6 @@
             justify-content: center;
             z-index: 1001;
             padding: 20px;
-            animation: fadeIn 0.2s ease;
         }
 
         .modal-content {
@@ -483,68 +436,6 @@
             width: 100%;
             text-align: center;
             border: 1px solid rgba(168, 85, 247, 0.2);
-        }
-
-        .secret-code {
-            background: #0a0a14;
-            padding: 16px;
-            border-radius: 20px;
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: 4px;
-            margin: 16px 0;
-            color: #c084fc;
-            font-family: 'SF Mono', monospace;
-        }
-
-        .prefix-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .prefix-item {
-            background: rgba(168, 85, 247, 0.08);
-            border-radius: 20px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(168, 85, 247, 0.1);
-        }
-
-        .prefix-item:active {
-            transform: scale(0.98);
-            background: rgba(168, 85, 247, 0.15);
-        }
-
-        .prefix-item i {
-            font-size: 20px;
-            color: #c084fc;
-            width: 28px;
-        }
-
-        .chat-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .chat-list span {
-            background: rgba(168, 85, 247, 0.12);
-            padding: 8px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .chat-list span:active {
-            transform: scale(0.96);
-            background: rgba(168, 85, 247, 0.25);
         }
 
         .admin-request {
@@ -573,7 +464,6 @@
             border-radius: 20px;
             background: rgba(0, 0, 0, 0.5);
             font-size: 11px;
-            font-weight: 500;
         }
 
         .request-details {
@@ -597,7 +487,6 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .small-btn:active {
@@ -615,62 +504,7 @@
             border-radius: 48px;
             font-size: 13px;
             z-index: 1000;
-            animation: fadeIn 0.3s ease;
-            font-weight: 500;
             white-space: nowrap;
-        }
-
-        .gift-card {
-            text-align: center;
-        }
-
-        .bear-icon {
-            font-size: 56px;
-            margin: 20px 0;
-        }
-
-        .rules-content {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #d1d5db;
-            max-height: 70vh;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-
-        .rules-section {
-            margin-bottom: 24px;
-        }
-
-        .rules-section h4 {
-            color: #c084fc;
-            margin: 20px 0 12px 0;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .punishment {
-            color: #fbbf24;
-            font-weight: 500;
-        }
-
-        hr {
-            border-color: rgba(255, 255, 255, 0.06);
-            margin: 16px 0;
-        }
-
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #a855f7;
-            border-radius: 4px;
         }
 
         .action-buttons {
@@ -678,68 +512,6 @@
             flex-direction: column;
             gap: 12px;
             margin-top: 20px;
-        }
-
-        .action-buttons .btn {
-            margin: 0;
-        }
-
-        .copy-number {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .copy-number span {
-            font-family: monospace;
-            font-size: 14px;
-            color: #10b981;
-            font-weight: 600;
-        }
-
-        .copy-number button {
-            background: #10b981;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 12px;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-number button:active {
-            transform: scale(0.95);
-        }
-
-        .admin-panel-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .admin-panel-buttons button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 20px;
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .admin-panel-buttons button.active {
-            background: linear-gradient(135deg, #a855f7, #7c3aed);
-            border-color: transparent;
         }
 
         /* Компактное модальное окно оплаты */
@@ -752,7 +524,6 @@
             font-weight: 800;
             color: #c084fc;
             margin: 10px 0;
-            letter-spacing: -1px;
         }
         .payment-code-block {
             background: #0a0a14;
@@ -761,239 +532,190 @@
             margin: 12px 0;
             border: 1px solid rgba(168, 85, 247, 0.3);
         }
-        .payment-code-block .label {
-            font-size: 10px;
-            color: #f59e0b;
-            margin-bottom: 6px;
-        }
         .payment-code-large {
             font-size: 24px;
             font-weight: 800;
             letter-spacing: 2px;
             font-family: monospace;
             color: #c084fc;
-            word-break: break-all;
         }
         .big-icon {
             font-size: 40px;
             margin-bottom: 6px;
             color: #c084fc;
         }
-        .simple-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .simple-row:last-child {
-            border-bottom: none;
-        }
-        .phone-input-large {
-            font-size: 16px;
-            text-align: center;
-            padding: 12px;
-        }
         .compact-btn {
             padding: 10px !important;
             font-size: 13px !important;
             margin-top: 6px !important;
         }
-        .compact-margin {
-            margin-top: 8px !important;
-        }
         .small-text {
             font-size: 10px;
             margin-top: 6px;
+        }
+        .phone-copy-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            padding: 8px 12px;
+            margin: 8px 0;
+        }
+        .phone-copy-row span {
+            font-family: monospace;
+            font-size: 13px;
+            color: #10b981;
+        }
+        .copy-small-btn {
+            background: #10b981;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .gift-bear {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+            animation: bounce 1s ease infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .prefix-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .prefix-item {
+            background: rgba(168, 85, 247, 0.08);
+            border-radius: 20px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border: 1px solid rgba(168, 85, 247, 0.1);
+        }
+        .chat-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .chat-list span {
+            background: rgba(168, 85, 247, 0.12);
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .rules-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #d1d5db;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .rules-section h4 {
+            color: #c084fc;
+            margin: 20px 0 12px 0;
+            font-size: 15px;
+        }
+        .punishment {
+            color: #fbbf24;
         }
     </style>
 </head>
 <body>
     <div class="splash-screen" id="splash">
         <div class="splash-logo">
-            <div class="splash-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
+            <div class="splash-icon"><i class="fas fa-chart-line"></i></div>
             <h1>JANGEL 3.1</h1>
             <p>обмен валют</p>
-            <div class="loading-bar">
-                <div class="loading-progress" id="loadProgress"></div>
-            </div>
+            <div class="loading-bar"><div class="loading-progress" id="loadProgress"></div></div>
         </div>
     </div>
 
     <div class="main-content" id="main">
         <div class="header">
             <h1>JANGEL 3.1</h1>
-            <div class="welcome-text">
-                <i class="fas fa-hand-wave"></i> Добро пожаловать дорогой и уважаемый пользователь! Мы ради приветствовать тебя.<br>
-                На связи: <span>@JANGEL_3_1</span>
-            </div>
+            <div class="welcome-text"><i class="fas fa-hand-wave"></i> Добро пожаловать! На связи: <span>@JANGEL_3_1</span></div>
         </div>
 
         <div id="panelExchange" class="panel active">
             <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-arrow-down"></i>
-                    Покупаю USDT
-                </div>
-                <div class="rate-row">
-                    <span class="rate-amount">от 7$</span>
-                    <span class="rate-price">76 ₽</span>
-                </div>
-                <div class="rate-row">
-                    <span class="rate-amount">от 20$</span>
-                    <span class="rate-price">77 ₽</span>
-                </div>
-                <div class="rate-row">
-                    <span class="rate-amount">от 50$</span>
-                    <span class="rate-price">78 ₽</span>
-                </div>
-                <div class="rate-row">
-                    <span class="rate-amount">от 100$</span>
-                    <span class="rate-price">79 ₽</span>
-                </div>
+                <div class="card-title"><i class="fas fa-arrow-down"></i> Покупаю USDT</div>
+                <div class="rate-row"><span class="rate-amount">от 7$</span><span class="rate-price">76 ₽</span></div>
+                <div class="rate-row"><span class="rate-amount">от 20$</span><span class="rate-price">77 ₽</span></div>
+                <div class="rate-row"><span class="rate-amount">от 50$</span><span class="rate-price">78 ₽</span></div>
+                <div class="rate-row"><span class="rate-amount">от 100$</span><span class="rate-price">79 ₽</span></div>
 
                 <div class="calculator">
-                    <div class="calc-label">
-                        <i class="fas fa-calculator"></i> Калькулятор покупки USDT
-                    </div>
-                    <input type="number" id="usdInput" class="calc-input" placeholder="Введите сумму в $" value="10" step="1">
-                    <div class="calc-result">
-                        <div class="calc-result-value" id="rubResult">760 ₽</div>
-                    </div>
+                    <div class="calc-label"><i class="fas fa-calculator"></i> Калькулятор</div>
+                    <input type="number" id="usdInput" class="calc-input" placeholder="Сумма в $" value="10" step="1">
+                    <div class="calc-result"><div class="calc-result-value" id="rubResult">760 ₽</div></div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn" id="exchangeBtn">
-                        <i class="fas fa-exchange-alt"></i>
-                        Обменять USDT
-                    </button>
-                    <button class="btn btn-secondary" id="chatServiceBtn">
-                        <i class="fas fa-comments"></i>
-                        Чат услуг
-                    </button>
-                    <button class="btn" id="contactBtn">
-                        <i class="fab fa-telegram"></i>
-                        Связаться
-                    </button>
+                    <button class="btn" id="exchangeBtn"><i class="fas fa-exchange-alt"></i> Обменять USDT</button>
+                    <button class="btn btn-secondary" id="chatServiceBtn"><i class="fas fa-comments"></i> Чат услуг</button>
+                    <button class="btn" id="contactBtn"><i class="fab fa-telegram"></i> Связаться</button>
                 </div>
 
-                <div class="reputation-block">
-                    <i class="fas fa-star" style="color: #fbbf24; font-size: 12px;"></i>
-                    <span> Репутация 4000+</span>
-                </div>
-                <div class="info-text">
-                    <i class="fas fa-exclamation-triangle"></i> Черные монеты запрещены
-                </div>
+                <div class="reputation-block"><i class="fas fa-star" style="color: #fbbf24;"></i> <span> Репутация 4000+</span></div>
+                <div class="info-text"><i class="fas fa-exclamation-triangle"></i> Черные монеты запрещены</div>
             </div>
         </div>
 
         <div id="panelMyOrders" class="panel">
             <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-list"></i>
-                    Мои заявки
-                </div>
-                <div id="myOrdersList">
-                    <div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div>
-                </div>
+                <div class="card-title"><i class="fas fa-list"></i> Мои заявки</div>
+                <div id="myOrdersList"><div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div></div>
             </div>
         </div>
 
         <div id="panelAdmin" class="panel">
             <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-crown"></i>
-                    Админ панель
-                </div>
-                
-                <div class="admin-panel-buttons">
-                    <button id="adminOrdersBtn" class="active"><i class="fas fa-clipboard-list"></i> Заявки</button>
-                    <button id="adminRecipientsBtn"><i class="fas fa-credit-card"></i> Реквизиты</button>
-                </div>
-                
-                <div id="adminOrdersSection">
-                    <div id="adminOrdersList">
-                        <div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div>
-                    </div>
-                </div>
-                
-                <div id="adminRecipientsSection" style="display: none;">
-                    <div class="info-text" style="margin-bottom: 16px;">
-                        <i class="fas fa-info-circle"></i> Нажмите на номер, чтобы скопировать
-                    </div>
-                    <div id="recipientsList"></div>
-                </div>
+                <div class="card-title"><i class="fas fa-crown"></i> Админ панель</div>
+                <div id="adminOrdersList"><div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div></div>
             </div>
         </div>
 
         <div id="panelPrefixes" class="panel">
             <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-hashtag"></i>
-                    Префиксы в чате услуг
-                </div>
-                <div class="info-text" style="margin-bottom: 12px;">
-                    <i class="fas fa-info-circle"></i> Нажмите на префикс, чтобы открыть чат
-                </div>
+                <div class="card-title"><i class="fas fa-hashtag"></i> Префиксы</div>
                 <div class="prefix-list" id="prefixList"></div>
             </div>
         </div>
 
         <div id="panelGift" class="panel">
             <div class="card gift-card">
-                <div class="card-title" style="justify-content: center;">
-                    <i class="fas fa-gift"></i>
-                    Интуитивный подарок
-                </div>
-                <div class="bear-icon"><i class="fas fa-bear"></i></div>
-                <div class="info-text">
-                    <i class="fas fa-comment-dots"></i> Оставляй отзыв в проверенных чатах и получай<br>
-                    <strong><i class="fas fa-gift"></i> плюшевого мишку Telegram</strong> в подарок!
-                </div>
-                <div class="chat-list">
-                    <span><i class="fab fa-telegram"></i> Jess</span>
-                    <span><i class="fab fa-telegram"></i> FRK</span>
-                    <span><i class="fab fa-telegram"></i> OLD</span>
-                    <span><i class="fab fa-telegram"></i> Вера Отзывы</span>
-                </div>
-                <div class="info-text" style="margin-top: 12px;">
-                    <i class="fas fa-info-circle"></i> После отзыва напиши мне — отправлю мишку
-                </div>
+                <div class="card-title" style="justify-content: center;"><i class="fas fa-gift"></i> Интуитивный подарок</div>
+                <div class="gift-bear"><i class="fas fa-bear"></i> 🧸</div>
+                <div class="info-text"><i class="fas fa-comment-dots"></i> Оставляй отзыв в проверенных чатах и получай <strong><i class="fas fa-gift"></i> плюшевого мишку Telegram</strong> в подарок!</div>
+                <div class="chat-list"><span><i class="fab fa-telegram"></i> Jess</span><span><i class="fab fa-telegram"></i> FRK</span><span><i class="fab fa-telegram"></i> OLD</span><span><i class="fab fa-telegram"></i> Вера Отзывы</span></div>
+                <div class="info-text"><i class="fas fa-info-circle"></i> После отзыва напиши мне — отправлю мишку</div>
             </div>
         </div>
 
         <div id="panelRules" class="panel">
             <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-book"></i>
-                    Правила чата
-                </div>
+                <div class="card-title"><i class="fas fa-book"></i> Правила чата</div>
                 <div class="rules-content" id="rulesContent"></div>
             </div>
         </div>
 
         <div class="bottom-nav">
-            <button class="nav-btn active" id="navExchange">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Обмен</span>
-            </button>
-            <button class="nav-btn" id="navMyOrders">
-                <i class="fas fa-clock"></i>
-                <span>Заявки</span>
-            </button>
-            <button class="nav-btn" id="navPrefixes">
-                <i class="fas fa-at"></i>
-                <span>Префиксы</span>
-            </button>
-            <button class="nav-btn" id="navGift">
-                <i class="fas fa-gift"></i>
-                <span>Подарок</span>
-            </button>
-            <button class="nav-btn" id="navRules">
-                <i class="fas fa-book"></i>
-                <span>Правила</span>
-            </button>
+            <button class="nav-btn active" id="navExchange"><i class="fas fa-exchange-alt"></i><span>Обмен</span></button>
+            <button class="nav-btn" id="navMyOrders"><i class="fas fa-clock"></i><span>Заявки</span></button>
+            <button class="nav-btn" id="navPrefixes"><i class="fas fa-at"></i><span>Префиксы</span></button>
+            <button class="nav-btn" id="navGift"><i class="fas fa-gift"></i><span>Подарок</span></button>
+            <button class="nav-btn" id="navRules"><i class="fas fa-book"></i><span>Правила</span></button>
         </div>
     </div>
 
@@ -1032,9 +754,7 @@
             function generatePaymentCode() {
                 const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
                 let code = '';
-                for (let i = 0; i < 8; i++) {
-                    code += chars[Math.floor(Math.random() * chars.length)];
-                }
+                for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
                 return code;
             }
             
@@ -1048,114 +768,38 @@
             }
             
             function copyToClipboard(text) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('Номер скопирован: ' + text);
-                }).catch(() => {
-                    showToast('Не удалось скопировать', true);
-                });
-            }
-            
-            async function loadRecipients() {
-                const { data, error } = await supabaseClient
-                    .from('recipients')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-                
-                const container = document.getElementById('recipientsList');
-                if (!container) return;
-                
-                if (error || !data || data.length === 0) {
-                    container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет добавленных реквизитов</div>';
-                    return;
-                }
-                
-                container.innerHTML = data.map(recipient => `
-                    <div class="copy-number">
-                        <div style="flex: 1;">
-                            <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">
-                                <i class="fas fa-university"></i> ${recipient.bank || 'Банк'}
-                            </div>
-                            <span>${recipient.account_number}</span>
-                        </div>
-                        <button onclick="window.copyToClipboard('${recipient.account_number}')">
-                            <i class="fas fa-copy"></i> Копировать
-                        </button>
-                    </div>
-                `).join('');
+                navigator.clipboard.writeText(text).then(() => showToast('Скопировано: ' + text));
             }
             
             async function loadMyOrders() {
                 if (!currentUser) return;
-                
-                const { data, error } = await supabaseClient
-                    .from('exchange_requests')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('created_at', { ascending: false });
-                
+                const { data } = await supabaseClient.from('exchange_requests').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
                 const container = document.getElementById('myOrdersList');
-                if (!container) return;
-                
-                if (error || !data || data.length === 0) {
-                    container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> У вас пока нет заявок</div>';
-                    return;
-                }
-                
-                const statusText = {
-                    pending: 'Ожидает оплаты',
-                    paid: 'Оплачено',
-                    completed: 'Завершено',
-                    cancelled: 'Отменено'
-                };
-                
-                const statusIcon = {
-                    pending: '<i class="fas fa-clock"></i>',
-                    paid: '<i class="fas fa-check-circle"></i>',
-                    completed: '<i class="fas fa-check-double"></i>',
-                    cancelled: '<i class="fas fa-times-circle"></i>'
-                };
-                
-                container.innerHTML = data.map(order => `
-                    <div class="admin-request">
-                        <div class="request-header">
-                            <span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0, 8)}</span>
-                            <span class="request-status">${statusIcon[order.status]} ${statusText[order.status]}</span>
-                        </div>
-                        <div class="request-details">
-                            <i class="fas fa-coins"></i> ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
-                            <i class="fas fa-key"></i> Код: ${order.secret_code}
-                        </div>
-                    </div>
-                `).join('');
+                if (!data || data.length === 0) { container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет заявок</div>'; return; }
+                const statusIcon = { pending: '<i class="fas fa-clock"></i>', paid: '<i class="fas fa-check-circle"></i>', completed: '<i class="fas fa-check-double"></i>', cancelled: '<i class="fas fa-times-circle"></i>' };
+                const statusText = { pending: 'Ожидает', paid: 'Оплачено', completed: 'Завершено', cancelled: 'Отменено' };
+                container.innerHTML = data.map(order => `<div class="admin-request"><div class="request-header"><span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0,8)}</span><span class="request-status">${statusIcon[order.status]} ${statusText[order.status]}</span></div><div class="request-details"><i class="fas fa-coins"></i> ${order.amount_usd} USDT → ${order.amount_rub} ₽<br><i class="fas fa-key"></i> Код: ${order.secret_code}</div></div>`).join('');
             }
             
             async function loadAdminOrders() {
                 if (!currentUser || currentUser.id !== ADMIN_ID) return;
-                
-                const { data, error } = await supabaseClient
-                    .from('exchange_requests')
-                    .select('*')
-                    .in('status', ['pending', 'paid'])
-                    .order('created_at', { ascending: false });
-                
+                const { data } = await supabaseClient.from('exchange_requests').select('*').in('status', ['pending', 'paid']).order('created_at', { ascending: false });
                 const container = document.getElementById('adminOrdersList');
-                if (!container) return;
-                
-                if (error || !data || data.length === 0) {
-                    container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет активных заявок</div>';
-                    return;
-                }
+                if (!data || data.length === 0) { container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет активных заявок</div>'; return; }
                 
                 container.innerHTML = data.map(order => `
                     <div class="admin-request">
                         <div class="request-header">
-                            <span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0, 8)}</span>
+                            <span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0,8)}</span>
                             <span class="request-status">${order.status === 'pending' ? '<i class="fas fa-hourglass-half"></i> Ожидает' : '<i class="fas fa-check-circle"></i> Оплачено'}</span>
                         </div>
                         <div class="request-details">
                             <i class="fas fa-user"></i> <strong>${order.username}</strong> (${order.user_id})<br>
                             <i class="fas fa-coins"></i> ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
-                            <i class="fas fa-phone"></i> ${order.phone}<br>
+                            <div class="phone-copy-row">
+                                <span><i class="fas fa-phone"></i> ${order.phone}</span>
+                                <button class="copy-small-btn" onclick="window.copyPhone('${order.phone}')"><i class="fas fa-copy"></i> Копировать</button>
+                            </div>
                             <i class="fas fa-university"></i> ${order.bank}<br>
                             <i class="fas fa-key"></i> <strong style="color:#c084fc">${order.secret_code}</strong>
                         </div>
@@ -1172,328 +816,87 @@
                 `).join('');
             }
             
+            window.copyPhone = (phone) => { copyToClipboard(phone); };
+            window.markPaid = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', id); showToast('Отмечено как оплачено'); loadAdminOrders(); };
+            window.completeOrder = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'completed' }).eq('id', id); showToast('Обмен завершен'); loadAdminOrders(); };
+            window.cancelOrder = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'cancelled' }).eq('id', id); showToast('Заявка отменена'); loadAdminOrders(); };
+            
             function showAmountSelector() {
                 const modal = document.createElement('div');
                 modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <i class="fas fa-dollar-sign" style="font-size: 40px; color: #c084fc;"></i>
-                        <h3 style="margin: 12px 0 16px; font-size: 18px;">Выберите сумму USDT</h3>
-                        <div class="amount-selector" id="amountSelector" style="margin: 12px 0;">
-                            <div class="amount-option" data-amount="10">10 USDT</div>
-                            <div class="amount-option" data-amount="20">20 USDT</div>
-                            <div class="amount-option" data-amount="50">50 USDT</div>
-                            <div class="amount-option" data-amount="100">100 USDT</div>
-                            <div class="amount-option" data-amount="200">200 USDT</div>
-                            <div class="amount-option" data-amount="500">500 USDT</div>
-                        </div>
-                        <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
-                            <input type="number" id="customAmount" class="form-input" placeholder="Или введите свою сумму" style="padding: 12px;">
-                        </div>
-                        <button class="btn" id="proceedToPaymentBtn" style="margin-top: 8px; padding: 12px;"><i class="fas fa-arrow-right"></i> Далее</button>
-                        <button class="btn btn-secondary" id="closeAmountBtn" style="margin-top: 8px; padding: 12px;"><i class="fas fa-times"></i> Отмена</button>
-                    </div>
-                `;
+                modal.innerHTML = `<div class="modal-content"><i class="fas fa-dollar-sign" style="font-size:40px;color:#c084fc;"></i><h3 style="margin:12px 0 16px;font-size:18px;">Выберите сумму USDT</h3><div class="amount-selector"><div class="amount-option" data-amount="10">10 USDT</div><div class="amount-option" data-amount="20">20 USDT</div><div class="amount-option" data-amount="50">50 USDT</div><div class="amount-option" data-amount="100">100 USDT</div><div class="amount-option" data-amount="200">200 USDT</div><div class="amount-option" data-amount="500">500 USDT</div></div><div class="form-group" style="margin-top:12px;"><input type="number" id="customAmount" class="form-input" placeholder="Или введите свою сумму" style="padding:12px;"></div><button class="btn" id="proceedToPaymentBtn" style="margin-top:8px;padding:12px;"><i class="fas fa-arrow-right"></i> Далее</button><button class="btn btn-secondary" id="closeAmountBtn" style="margin-top:8px;padding:12px;"><i class="fas fa-times"></i> Отмена</button></div>`;
                 document.body.appendChild(modal);
-                
                 let selectedAmountValue = null;
-                
-                document.querySelectorAll('.amount-option').forEach(opt => {
-                    opt.onclick = () => {
-                        document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected'));
-                        opt.classList.add('selected');
-                        selectedAmountValue = parseInt(opt.dataset.amount);
-                        document.getElementById('customAmount').value = '';
-                    };
-                });
-                
-                document.getElementById('customAmount').oninput = (e) => {
-                    document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected'));
-                    selectedAmountValue = parseInt(e.target.value);
-                };
-                
-                document.getElementById('proceedToPaymentBtn').onclick = () => {
-                    if (!selectedAmountValue || selectedAmountValue < 7) {
-                        showToast('Минимальная сумма 7 USDT', true);
-                        return;
-                    }
-                    modal.remove();
-                    showSimplePaymentScreen(selectedAmountValue);
-                };
-                
+                document.querySelectorAll('.amount-option').forEach(opt => { opt.onclick = () => { document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); selectedAmountValue = parseInt(opt.dataset.amount); document.getElementById('customAmount').value = ''; }; });
+                document.getElementById('customAmount').oninput = (e) => { document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected')); selectedAmountValue = parseInt(e.target.value); };
+                document.getElementById('proceedToPaymentBtn').onclick = () => { if (!selectedAmountValue || selectedAmountValue < 7) { showToast('Минимальная сумма 7 USDT', true); return; } modal.remove(); showPaymentScreen(selectedAmountValue); };
                 document.getElementById('closeAmountBtn').onclick = () => modal.remove();
             }
             
-            function showSimplePaymentScreen(amount) {
+            function showPaymentScreen(amount) {
                 const rubAmount = Math.floor(amount * getRate(amount));
                 const paymentCode = generatePaymentCode();
-                
                 const modal = document.createElement('div');
                 modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content payment-modal">
-                        <div class="big-icon"><i class="fas fa-credit-card"></i></div>
-                        <div style="font-size: 11px; color: #9ca3af;"><i class="fas fa-ruble-sign"></i> К оплате</div>
-                        <div class="payment-amount">${rubAmount} ₽</div>
-                        <div style="font-size: 11px; color: #6b7280;"><i class="fas fa-dollar-sign"></i> ${amount} USDT</div>
-                        
-                        <div class="payment-code-block">
-                            <div class="label"><i class="fas fa-key"></i> Код платежа</div>
-                            <div class="payment-code-large">${paymentCode}</div>
-                            <button class="btn btn-secondary compact-btn" id="copyCodeBtn" style="margin-top: 8px; padding: 6px; font-size: 11px;"><i class="fas fa-copy"></i> Скопировать</button>
-                        </div>
-                        
-                        <div class="small-text">
-                            <i class="fas fa-info-circle"></i> Укажите код в комментарии
-                        </div>
-                        
-                        <button class="btn btn-warning compact-btn" id="payBillBtn" style="margin-top: 10px;"><i class="fas fa-credit-card"></i> Оплатить счет</button>
-                        <button class="btn btn-success compact-btn" id="simpleContinueBtn" style="margin-top: 6px;"><i class="fas fa-check-circle"></i> Я оплатил(а)</button>
-                        <button class="btn btn-secondary compact-btn" id="simpleCancelBtn" style="margin-top: 6px;"><i class="fas fa-arrow-left"></i> Назад</button>
-                    </div>
-                `;
+                modal.innerHTML = `<div class="modal-content payment-modal"><div class="big-icon"><i class="fas fa-credit-card"></i></div><div style="font-size:11px;color:#9ca3af;"><i class="fas fa-ruble-sign"></i> К оплате</div><div class="payment-amount">${rubAmount} ₽</div><div style="font-size:11px;color:#6b7280;"><i class="fas fa-dollar-sign"></i> ${amount} USDT</div><div class="payment-code-block"><div class="label" style="font-size:10px;color:#f59e0b;"><i class="fas fa-key"></i> Код платежа</div><div class="payment-code-large">${paymentCode}</div><button class="btn btn-secondary compact-btn" id="copyCodeBtn" style="margin-top:8px;padding:6px;"><i class="fas fa-copy"></i> Скопировать</button></div><div class="small-text"><i class="fas fa-info-circle"></i> Укажите код в комментарии</div><button class="btn btn-warning compact-btn" id="payBillBtn" style="margin-top:10px;"><i class="fas fa-credit-card"></i> Оплатить счет</button><button class="btn btn-success compact-btn" id="simpleContinueBtn" style="margin-top:6px;"><i class="fas fa-check-circle"></i> Я оплатил(а)</button><button class="btn btn-secondary compact-btn" id="simpleCancelBtn" style="margin-top:6px;"><i class="fas fa-arrow-left"></i> Назад</button></div>`;
                 document.body.appendChild(modal);
-                
-                document.getElementById('copyCodeBtn').onclick = () => {
-                    copyToClipboard(paymentCode);
-                };
-                
-                document.getElementById('payBillBtn').onclick = () => {
-                    window.open(PAYMENT_LINK, '_blank');
-                };
-                
-                document.getElementById('simpleContinueBtn').onclick = () => {
-                    modal.remove();
-                    showSimpleDetailsForm(amount, rubAmount, paymentCode);
-                };
+                document.getElementById('copyCodeBtn').onclick = () => copyToClipboard(paymentCode);
+                document.getElementById('payBillBtn').onclick = () => window.open(PAYMENT_LINK, '_blank');
+                document.getElementById('simpleContinueBtn').onclick = () => { modal.remove(); showDetailsForm(amount, rubAmount, paymentCode); };
                 document.getElementById('simpleCancelBtn').onclick = () => modal.remove();
             }
             
-            function showSimpleDetailsForm(amount, rubAmount, paymentCode) {
+            function showDetailsForm(amount, rubAmount, paymentCode) {
                 const modal = document.createElement('div');
                 modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content payment-modal">
-                        <i class="fas fa-user-check" style="font-size: 36px; color: #c084fc;"></i>
-                        <h3 style="margin: 12px 0; font-size: 16px;">Куда перевести?</h3>
-                        
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <div class="form-label" style="font-size: 11px;"><i class="fas fa-phone"></i> Номер телефона (СБП)</div>
-                            <input type="tel" id="simplePhone" class="form-input phone-input-large" placeholder="+7 XXX XXX XX XX" style="padding: 10px; font-size: 14px;">
-                        </div>
-                        
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <div class="form-label" style="font-size: 11px;"><i class="fas fa-university"></i> Банк получателя</div>
-                            <div class="bank-select" id="simpleBankSelect" style="gap: 6px;">
-                                <div class="bank-option" data-bank="Сбер" style="padding: 8px; font-size: 12px;">Сбер</div>
-                                <div class="bank-option" data-bank="Альфа" style="padding: 8px; font-size: 12px;">Альфа</div>
-                                <div class="bank-option" data-bank="Т-банк" style="padding: 8px; font-size: 12px;">Т-банк</div>
-                                <div class="bank-option" data-bank="ВТБ" style="padding: 8px; font-size: 12px;">ВТБ</div>
-                            </div>
-                        </div>
-                        
-                        <div class="simple-row" style="background: rgba(168,85,247,0.1); border-radius: 16px; padding: 8px; margin: 10px 0;">
-                            <span style="font-size: 12px;"><i class="fas fa-ruble-sign"></i> Сумма:</span>
-                            <span style="color: #c084fc; font-weight: 700; font-size: 14px;">${rubAmount} ₽</span>
-                        </div>
-                        
-                        <button class="btn compact-btn" id="simpleSubmitBtn" style="padding: 10px;"><i class="fas fa-paper-plane"></i> Отправить заявку</button>
-                        <button class="btn btn-secondary compact-btn" id="simpleBackBtn" style="margin-top: 6px; padding: 10px;"><i class="fas fa-arrow-left"></i> Назад</button>
-                    </div>
-                `;
+                modal.innerHTML = `<div class="modal-content payment-modal"><i class="fas fa-user-check" style="font-size:36px;color:#c084fc;"></i><h3 style="margin:12px 0;font-size:16px;">Куда перевести?</h3><div class="form-group" style="margin-bottom:12px;"><div class="form-label" style="font-size:11px;"><i class="fas fa-phone"></i> Номер телефона (СБП)</div><input type="tel" id="simplePhone" class="form-input" placeholder="+7 XXX XXX XX XX" style="padding:10px;font-size:14px;"></div><div class="form-group" style="margin-bottom:12px;"><div class="form-label" style="font-size:11px;"><i class="fas fa-university"></i> Банк получателя</div><div class="bank-select" id="simpleBankSelect" style="gap:6px;"><div class="bank-option" data-bank="Сбер" style="padding:8px;">Сбер</div><div class="bank-option" data-bank="Альфа" style="padding:8px;">Альфа</div><div class="bank-option" data-bank="Т-банк" style="padding:8px;">Т-банк</div><div class="bank-option" data-bank="ВТБ" style="padding:8px;">ВТБ</div></div></div><div style="background:rgba(168,85,247,0.1);border-radius:16px;padding:8px;margin:10px 0;display:flex;justify-content:space-between;"><span style="font-size:12px;"><i class="fas fa-ruble-sign"></i> Сумма:</span><span style="color:#c084fc;font-weight:700;">${rubAmount} ₽</span></div><button class="btn compact-btn" id="simpleSubmitBtn" style="padding:10px;"><i class="fas fa-paper-plane"></i> Отправить заявку</button><button class="btn btn-secondary compact-btn" id="simpleBackBtn" style="margin-top:6px;padding:10px;"><i class="fas fa-arrow-left"></i> Назад</button></div>`;
                 document.body.appendChild(modal);
-                
                 let selectedBank = 'Сбер';
-                document.querySelectorAll('#simpleBankSelect .bank-option').forEach(opt => {
-                    opt.onclick = () => {
-                        document.querySelectorAll('#simpleBankSelect .bank-option').forEach(o => o.classList.remove('selected'));
-                        opt.classList.add('selected');
-                        selectedBank = opt.dataset.bank;
-                    };
-                    if (opt.dataset.bank === 'Сбер') opt.classList.add('selected');
-                });
-                
+                document.querySelectorAll('#simpleBankSelect .bank-option').forEach(opt => { opt.onclick = () => { document.querySelectorAll('#simpleBankSelect .bank-option').forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); selectedBank = opt.dataset.bank; }; if (opt.dataset.bank === 'Сбер') opt.classList.add('selected'); });
                 document.getElementById('simpleSubmitBtn').onclick = async () => {
                     const phone = document.getElementById('simplePhone').value.trim();
-                    if (!phone) {
-                        showToast('Введите номер телефона', true);
-                        return;
-                    }
-                    
-                    const { error } = await supabaseClient
-                        .from('exchange_requests')
-                        .insert([{
-                            user_id: currentUser.id,
-                            username: currentUser.username || currentUser.first_name || 'User',
-                            amount_usd: amount,
-                            amount_rub: rubAmount,
-                            rate: getRate(amount),
-                            phone: phone,
-                            bank: selectedBank,
-                            secret_code: paymentCode,
-                            status: 'pending'
-                        }]);
-                    
-                    if (error) {
-                        console.error(error);
-                        showToast('Ошибка: ' + error.message, true);
-                        return;
-                    }
-                    
+                    if (!phone) { showToast('Введите номер телефона', true); return; }
+                    const { error } = await supabaseClient.from('exchange_requests').insert([{ user_id: currentUser.id, username: currentUser.username || currentUser.first_name, amount_usd: amount, amount_rub: rubAmount, rate: getRate(amount), phone: phone, bank: selectedBank, secret_code: paymentCode, status: 'pending' }]);
+                    if (error) { showToast('Ошибка: ' + error.message, true); return; }
                     modal.remove();
                     showToast('Заявка создана! Ожидайте подтверждения');
                     loadMyOrders();
-                    
-                    if (currentUser.id === ADMIN_ID) {
-                        loadAdminOrders();
-                    }
+                    if (currentUser.id === ADMIN_ID) loadAdminOrders();
                 };
-                
-                document.getElementById('simpleBackBtn').onclick = () => {
-                    modal.remove();
-                    showSimplePaymentScreen(amount);
-                };
+                document.getElementById('simpleBackBtn').onclick = () => { modal.remove(); showPaymentScreen(amount); };
             }
             
-            const prefixes = [
-                { name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' },
-                { name: '@duba_t', desc: 'скупает Макс (объём)' }
-            ];
-            
+            const prefixes = [{ name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' }, { name: '@duba_t', desc: 'скупает Макс (объём)' }];
             function loadPrefixes() {
                 const container = document.getElementById('prefixList');
                 if (!container) return;
-                container.innerHTML = prefixes.map(p => `
-                    <div class="prefix-item" onclick="window.open('https://t.me/${p.name.replace('@', '')}', '_blank')">
-                        <i class="fab fa-telegram"></i>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-family: monospace;">${p.name}</div>
-                            <div style="font-size: 11px; color: #9ca3af;">${p.desc}</div>
-                        </div>
-                        <i class="fas fa-chevron-right" style="font-size: 12px; color: #6b7280;"></i>
-                    </div>
-                `).join('');
+                container.innerHTML = prefixes.map(p => `<div class="prefix-item" onclick="window.open('https://t.me/${p.name.replace('@', '')}', '_blank')"><i class="fab fa-telegram"></i><div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:11px;color:#9ca3af;">${p.desc}</div></div><i class="fas fa-chevron-right"></i></div>`).join('');
             }
             
             function loadRules() {
-                const rulesHTML = `
-                    <div class="rules-section"><h4><i class="fas fa-gavel"></i> 1. Общие положения</h4><p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил и обязуется соблюдать их в полном объёме.</p><p>1.2 Срок подачи апелляции на наказание, которое пользователь считает несправедливым, не должен превышать 48 часов с момента его получения. Апелляции, поданные по истечении данного срока, рассмотрению не подлежат.</p><p>1.3 Администрация проекта Ja Angel не несёт ответственности за фейковые аккаунты и не обязана возмещать пользователю утраченные средства, ценности или иные ресурсы, возникшие в результате сделок между участниками. Исключение составляют случаи, связанные с официальным депозитом, размещённым в переходнике или в био чата, при условии предоставления полных и подтверждённых доказательств.</p><p>1.4 Пользователь несёт личную ответственность перед участниками сделки за действия третьих лиц, включая случаи, когда такие действия приводят к нарушению прав и законных интересов сторон. В подобных ситуациях наказания могут применяться как к участнику сделки, так и к третьему лицу.</p><p>1.5 Незнание настоящих правил не освобождает пользователя от ответственности.</p></div>
-                    <div class="rules-section"><h4><i class="fas fa-ban"></i> 2. Нарушения и меры наказания</h4><p>2.1 Наличие подтверждённых доказательств скама, попыток обмана, введения в заблуждение пользователей или администрации проекта. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.2 Запрещена реклама, привлечение, перегон или переманивание участников любыми способами без предварительного согласования с руководством проекта. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.3 Угрозы жизни и здоровью, а также взаимодействие с подозрительными лицами. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.4 Категорически запрещено оставлять отзывы, которые не соответствуют действительности, искажают факты либо вводят в заблуждение пользователей. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p><p>2.5 Оскорбление участников проекта. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 24 часа.</span></p><p>2.6 Предложения любых видов азартных игр на деньги в чате. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 24 часа.</span></p><p>2.7 Отметка администрации в случае игнорирования личных сообщений в течение 24 часов. <span class="punishment"><i class="fas fa-clock"></i> Наказание: мут 5 часов.</span></p><p>2.8 Обмен и покупка USDT запрещена. <span class="punishment"><i class="fas fa-skull"></i> Наказание: бан.</span></p></div>
-                `;
-                document.getElementById('rulesContent').innerHTML = rulesHTML;
+                document.getElementById('rulesContent').innerHTML = `<div class="rules-section"><h4><i class="fas fa-gavel"></i> 1. Общие положения</h4><p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил.</p><p>1.2 Срок подачи апелляции — 48 часов.</p><p>1.3 Администрация не несёт ответственности за фейковые аккаунты.</p><p>1.4 Пользователь несёт личную ответственность за действия третьих лиц.</p><p>1.5 Незнание правил не освобождает от ответственности.</p></div><div class="rules-section"><h4><i class="fas fa-ban"></i> 2. Нарушения</h4><p>2.1 Скам, обман — <span class="punishment">бан</span></p><p>2.2 Реклама без согласования — <span class="punishment">бан</span></p><p>2.3 Угрозы — <span class="punishment">бан</span></p><p>2.4 Ложные отзывы — <span class="punishment">бан</span></p><p>2.5 Оскорбления — <span class="punishment">мут 24ч</span></p><p>2.6 Азартные игры — <span class="punishment">мут 24ч</span></p><p>2.7 Обмен USDT — <span class="punishment">бан</span></p></div>`;
             }
             
             function setupNav() {
                 const setActive = (panel) => {
                     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
                     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    
-                    const panelId = `panel${panel.charAt(0).toUpperCase() + panel.slice(1)}`;
-                    const navId = `nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`;
-                    
-                    const panelEl = document.getElementById(panelId);
-                    const navEl = document.getElementById(navId);
-                    
-                    if (panelEl) panelEl.classList.add('active');
-                    if (navEl) navEl.classList.add('active');
-                    
+                    document.getElementById(`panel${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
+                    document.getElementById(`nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
                     if (panel === 'myOrders') loadMyOrders();
-                    if (panel === 'admin') {
-                        loadAdminOrders();
-                        loadRecipients();
-                        document.getElementById('adminOrdersBtn').classList.add('active');
-                        document.getElementById('adminRecipientsBtn').classList.remove('active');
-                        document.getElementById('adminOrdersSection').style.display = 'block';
-                        document.getElementById('adminRecipientsSection').style.display = 'none';
-                    }
+                    if (panel === 'admin') loadAdminOrders();
                 };
-                
                 document.getElementById('navExchange').onclick = () => setActive('exchange');
                 document.getElementById('navMyOrders').onclick = () => setActive('myOrders');
                 document.getElementById('navPrefixes').onclick = () => setActive('prefixes');
                 document.getElementById('navGift').onclick = () => setActive('gift');
                 document.getElementById('navRules').onclick = () => setActive('rules');
-                
                 window.setActive = setActive;
             }
             
-            function setupAdminTabs() {
-                const adminOrdersBtn = document.getElementById('adminOrdersBtn');
-                const adminRecipientsBtn = document.getElementById('adminRecipientsBtn');
-                const adminOrdersSection = document.getElementById('adminOrdersSection');
-                const adminRecipientsSection = document.getElementById('adminRecipientsSection');
-                
-                if (adminOrdersBtn && adminRecipientsBtn) {
-                    adminOrdersBtn.onclick = () => {
-                        adminOrdersBtn.classList.add('active');
-                        adminRecipientsBtn.classList.remove('active');
-                        adminOrdersSection.style.display = 'block';
-                        adminRecipientsSection.style.display = 'none';
-                        loadAdminOrders();
-                    };
-                    
-                    adminRecipientsBtn.onclick = () => {
-                        adminRecipientsBtn.classList.add('active');
-                        adminOrdersBtn.classList.remove('active');
-                        adminOrdersSection.style.display = 'none';
-                        adminRecipientsSection.style.display = 'block';
-                        loadRecipients();
-                    };
-                }
-            }
-            
-            window.markPaid = async (id) => {
-                const { error } = await supabaseClient
-                    .from('exchange_requests')
-                    .update({ status: 'paid', paid_at: new Date().toISOString() })
-                    .eq('id', id);
-                if (!error) {
-                    showToast('Отмечено как оплачено');
-                    loadAdminOrders();
-                }
-            };
-            
-            window.completeOrder = async (id) => {
-                const { error } = await supabaseClient
-                    .from('exchange_requests')
-                    .update({ status: 'completed' })
-                    .eq('id', id);
-                if (!error) {
-                    showToast('Обмен завершен');
-                    loadAdminOrders();
-                }
-            };
-            
-            window.cancelOrder = async (id) => {
-                const { error } = await supabaseClient
-                    .from('exchange_requests')
-                    .update({ status: 'cancelled' })
-                    .eq('id', id);
-                if (!error) {
-                    showToast('Заявка отменена');
-                    loadAdminOrders();
-                }
-            };
-            
-            window.copyToClipboard = copyToClipboard;
-            
             async function init() {
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    currentUser = tg.initDataUnsafe.user;
-                } else {
-                    currentUser = { id: 123456789, username: 'test_user', first_name: 'Test' };
-                }
-                
-                try {
-                    await supabaseClient
-                        .from('users')
-                        .upsert({
-                            telegram_id: currentUser.id,
-                            username: currentUser.username || currentUser.first_name,
-                            first_name: currentUser.first_name,
-                            last_seen: new Date().toISOString()
-                        });
-                } catch(e) {}
+                if (tg.initDataUnsafe?.user) currentUser = tg.initDataUnsafe.user;
+                else currentUser = { id: 123456789, username: 'test_user', first_name: 'Test' };
                 
                 document.getElementById('usdInput').addEventListener('input', calculateRub);
                 document.getElementById('exchangeBtn').onclick = showAmountSelector;
@@ -1503,34 +906,24 @@
                 loadPrefixes();
                 loadRules();
                 setupNav();
-                setupAdminTabs();
                 
                 if (currentUser.id === ADMIN_ID) {
                     const floatingBtn = document.getElementById('floatingAdmin');
                     floatingBtn.style.display = 'flex';
-                    floatingBtn.onclick = () => {
-                        window.setActive('admin');
-                    };
+                    floatingBtn.onclick = () => window.setActive('admin');
                 }
                 
                 const splash = document.getElementById('splash');
                 const main = document.getElementById('main');
                 const progress = document.getElementById('loadProgress');
-                
                 let p = 0;
                 const interval = setInterval(() => {
                     p += 15;
+                    progress.style.width = Math.min(p, 100) + '%';
                     if (p >= 100) {
                         clearInterval(interval);
-                        setTimeout(() => {
-                            splash.style.opacity = '0';
-                            setTimeout(() => {
-                                splash.style.display = 'none';
-                                main.style.display = 'block';
-                            }, 300);
-                        }, 200);
+                        setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; main.style.display = 'block'; }, 300); }, 200);
                     }
-                    progress.style.width = Math.min(p, 100) + '%';
                 }, 50);
             }
             
