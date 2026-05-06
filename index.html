@@ -2,1242 +2,1560 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Jangel 3.1 | Обмен</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Блэкджек • Казино</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: pan-x pan-y;
+        :root {
+            --bg: #0d0d0d;
+            --felt: #0d5624;
+            --felt-light: #116b2e;
+            --felt-dark: #083d18;
+            --gold: #c9a84c;
+            --gold-light: #e0c878;
+            --gold-dark: #8b6b1e;
+            --text: #e8dfc8;
+            --text-dim: #9e9478;
+            --card-bg: #faf7ed;
+            --card-shadow: rgba(0,0,0,0.5);
+            --red: #d94040;
+            --black: #1a1a1a;
+            --btn-hit: #c0392b;
+            --btn-stand: #27ae60;
+            --btn-double: #d4880f;
+            --btn-split: #7d3c98;
+            --chip-border: rgba(255,255,255,0.25);
+            --panel-bg: rgba(0,0,0,0.45);
+            --radius: 12px;
+            --font: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: #05050c;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--font);
+            background: var(--bg);
+            background-image: 
+                radial-gradient(ellipse at 50% 30%, #0a2e15 0%, #051408 60%, #020802 100%);
             min-height: 100vh;
-            color: #f0f0f0;
-            line-height: 1.4;
-            touch-action: pan-x pan-y;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, #0f0f1a 0%, #030307 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .splash-logo {
-            text-align: center;
-            animation: fadeIn 0.6s ease;
-        }
-
-        .splash-icon {
-            font-size: 70px;
-            background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4));
-        }
-
-        .splash-logo h1 {
-            font-size: 32px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.8px;
-        }
-
-        .splash-logo p {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 8px;
-            font-weight: 500;
-        }
-
-        .loading-bar {
-            width: 220px;
-            height: 3px;
-            background: rgba(168, 85, 247, 0.2);
-            border-radius: 4px;
-            margin-top: 32px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
             overflow: hidden;
         }
 
-        .loading-progress {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff);
-            border-radius: 4px;
-            transition: width 0.2s ease;
-        }
-
-        .main-content {
-            display: none;
-            padding-bottom: 84px;
-        }
-
-        .header {
-            background: rgba(8, 8, 16, 0.92);
-            backdrop-filter: blur(24px);
-            padding: 20px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(168, 85, 247, 0.25);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .header h1 {
-            font-size: 26px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #e9d5ff, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.8px;
-        }
-
-        .welcome-text {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-top: 10px;
-            background: rgba(168, 85, 247, 0.12);
-            padding: 8px 18px;
-            border-radius: 60px;
-            display: inline-block;
-            font-weight: 500;
-        }
-
-        .welcome-text span {
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-        }
-
-        .tips-card {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.08));
-            border-left: 3px solid #f59e0b;
-            margin-bottom: 16px;
-        }
-        .tip-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .tip-item:last-child {
-            border-bottom: none;
-        }
-        .tip-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(245, 158, 11, 0.15);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .tip-icon i {
-            font-size: 14px;
-            color: #f59e0b;
-        }
-        .tip-text {
-            flex: 1;
-        }
-        .tip-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #f59e0b;
-            margin-bottom: 4px;
-        }
-        .tip-desc {
-            font-size: 11px;
-            color: #9ca3af;
-            line-height: 1.4;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(8, 8, 16, 0.96);
-            backdrop-filter: blur(24px);
-            display: flex;
-            border-top: 1px solid rgba(168, 85, 247, 0.2);
-            padding: 8px 16px 26px;
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .nav-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 8px 4px;
-            border-radius: 60px;
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .nav-btn i {
-            font-size: 22px;
-        }
-
-        .nav-btn.active {
-            background: rgba(168, 85, 247, 0.2);
-            color: #c084fc;
-        }
-
-        .nav-btn:active i {
-            transform: scale(0.92);
-        }
-
-        .panel {
-            display: none;
-            padding: 16px;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .panel.active {
-            display: block;
-        }
-
-        .card {
-            background: rgba(18, 18, 30, 0.75);
-            backdrop-filter: blur(24px);
-            border-radius: 36px;
-            padding: 22px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #c084fc, #e9d5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .rate-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .rate-row:last-child {
-            border-bottom: none;
-        }
-
-        .rate-amount {
-            font-size: 14px;
-            font-weight: 500;
-            color: #9ca3af;
-        }
-
-        .rate-price {
-            font-size: 20px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #a855f7, #7c3aed);
-            border: none;
-            padding: 14px 20px;
-            border-radius: 60px;
-            color: white;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s ease;
+        /* ==================== СТРАНИЦА СТОЛА ==================== */
+        .page {
             width: 100%;
-            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+            max-width: 520px;
+            height: 100vh;
+            max-height: 820px;
+            position: absolute;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
 
-        .btn:active {
-            transform: scale(0.97);
+        .page-table {
+            transform: translateX(0);
+            opacity: 1;
         }
 
-        .btn-secondary {
-            background: rgba(168, 85, 247, 0.15);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            box-shadow: none;
-            color: #c084fc;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .info-text {
-            font-size: 11px;
-            color: #9ca3af;
-            text-align: center;
-            margin-top: 14px;
-            padding: 10px;
-            background: rgba(168, 85, 247, 0.08);
-            border-radius: 28px;
-            font-weight: 500;
-        }
-
-        .reputation-block {
-            text-align: center;
-            margin-top: 18px;
-            padding: 12px;
-            background: rgba(168, 85, 247, 0.08);
-            border-radius: 60px;
-        }
-
-        .reputation-block span {
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .calculator {
-            background: rgba(10, 10, 20, 0.6);
-            border-radius: 32px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .calc-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #c084fc;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .calc-input {
-            width: 100%;
-            background: #0a0a14;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 60px;
-            padding: 16px 20px;
-            color: white;
-            font-size: 22px;
-            font-weight: 700;
-            text-align: center;
-            outline: none;
-            font-family: 'Inter', monospace;
-        }
-
-        .calc-input:focus {
-            border-color: #c084fc;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
-        }
-
-        .calc-result {
-            text-align: center;
-            margin-top: 20px;
-            padding: 16px;
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(124, 58, 237, 0.05));
-            border-radius: 60px;
-        }
-
-        .calc-result-value {
-            font-size: 34px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .amount-selector {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .amount-option {
-            background: #0a0a14;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 28px;
-            padding: 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 16px;
-            transition: all 0.2s;
-            color: white;
-        }
-
-        .amount-option.selected {
-            background: linear-gradient(135deg, #a855f7, #7c3aed);
-            border-color: transparent;
-            transform: scale(0.98);
-        }
-
-        .floating-admin {
-            position: fixed;
-            bottom: 96px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #a855f7, #7c3aed);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 200;
-            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
-        }
-
-        .floating-admin:active {
-            transform: scale(0.92);
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.96);
-            backdrop-filter: blur(16px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            padding: 20px;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .modal-content {
-            background: #12121c;
-            border-radius: 44px;
-            padding: 20px;
-            max-width: 340px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-        }
-
-        .admin-request {
-            background: rgba(30, 30, 42, 0.7);
-            border-radius: 32px;
-            padding: 18px;
-            margin-bottom: 14px;
-            border-left: 4px solid #f59e0b;
-        }
-
-        .request-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .request-id {
-            color: #c084fc;
-            font-weight: 700;
-            font-family: monospace;
-            font-size: 11px;
-            background: rgba(168, 85, 247, 0.15);
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
-        .request-status {
-            padding: 4px 12px;
-            border-radius: 40px;
-            background: rgba(0, 0, 0, 0.5);
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .user-nickname {
-            font-size: 18px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #f97316);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .user-id-small {
-            font-size: 10px;
-            color: #6b7280;
-            font-family: monospace;
-            margin-left: 8px;
-        }
-        
-        .request-details {
-            font-size: 13px;
-            margin: 12px 0;
-            color: #9ca3af;
-            line-height: 1.7;
-        }
-
-        .request-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 14px;
-        }
-
-        .small-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 44px;
-            border: none;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .small-btn:active {
-            transform: scale(0.96);
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e293b;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-size: 13px;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-            font-weight: 600;
-            white-space: nowrap;
-            backdrop-filter: blur(8px);
+        .page-table.slide-out {
+            transform: translateX(-30%);
+            opacity: 0.3;
             pointer-events: none;
         }
 
-        .action-buttons {
+        .table {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(180deg, #0f652d 0%, #0b4d22 30%, #083a19 60%, #062b12 100%);
+            border: 14px solid #2b1506;
+            border-radius: 200px / 30px;
+            box-shadow: 
+                inset 0 0 150px rgba(0,0,0,0.6),
+                0 20px 70px rgba(0,0,0,0.9),
+                0 0 0 6px #4a2c10;
+            padding: 20px 24px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
         }
 
-        .payment-modal {
-            text-align: center;
-            padding: 18px !important;
+        .table::before {
+            content: '';
+            position: absolute;
+            top: 18px; left: 35px; right: 35px; bottom: 18px;
+            border: 3px solid rgba(201,168,76,0.5);
+            border-radius: 185px / 24px;
+            pointer-events: none;
         }
-        .payment-amount {
-            font-size: 38px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 10px 0;
+        .table::after {
+            content: '';
+            position: absolute;
+            top: 26px; left: 43px; right: 43px; bottom: 26px;
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 178px / 20px;
+            pointer-events: none;
         }
-        .payment-code-block {
-            background: #0a0a14;
-            padding: 14px;
-            border-radius: 32px;
-            margin: 12px 0;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-        }
-        .payment-code-large {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            font-family: monospace;
-            color: #c084fc;
-        }
-        .big-icon {
-            font-size: 44px;
+
+        /* Верхняя панель */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
             margin-bottom: 6px;
-            color: #c084fc;
+            gap: 10px;
         }
-        .compact-btn {
-            padding: 10px !important;
-            font-size: 13px !important;
-            margin-top: 8px !important;
-        }
-        .small-text {
-            font-size: 10px;
-            margin-top: 8px;
-            color: #9ca3af;
-        }
-        .warning-box {
-            background: rgba(245, 158, 11, 0.12);
-            border-radius: 20px;
-            padding: 12px;
-            margin: 12px 0;
-            text-align: left;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        .warning-box i {
-            color: #f59e0b;
-            margin-right: 8px;
-        }
-        .warning-box p {
-            font-size: 11px;
-            color: #fbbf24;
-            line-height: 1.5;
-            margin: 6px 0;
-        }
-        .warning-title {
-            font-weight: 700;
-            font-size: 12px;
-            color: #f59e0b;
-            margin-bottom: 8px;
-        }
-        .phone-copy-row {
+
+        .balance-panel {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: rgba(16, 185, 129, 0.12);
-            border-radius: 24px;
-            padding: 8px 14px;
-            margin: 10px 0;
+            gap: 10px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(201,168,76,0.4);
+            border-radius: 30px;
+            padding: 8px 22px;
+            flex: 1;
         }
-        .phone-copy-row span {
-            font-family: monospace;
-            font-size: 13px;
-            color: #10b981;
-            font-weight: 600;
+
+        .balance-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #f5d97c, #b88a20);
+            border: 2px solid #8b6914;
+            flex-shrink: 0;
         }
-        .copy-small-btn {
-            background: #10b981;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 44px;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .gift-bear {
-            font-size: 80px;
-            text-align: center;
-            margin: 20px 0;
-            animation: bounce 1s ease infinite;
-        }
-        .prefix-list {
+
+        .balance-info {
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
-        .prefix-item {
-            background: rgba(168, 85, 247, 0.08);
-            border-radius: 32px;
-            padding: 14px 18px;
+
+        .balance-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--text-dim);
+        }
+
+        .balance-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold-light);
+            letter-spacing: 0.5px;
+            transition: transform 0.15s ease;
+        }
+
+        .btn-profile {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--panel-bg);
+            border: 1.5px solid rgba(201,168,76,0.4);
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 14px;
-            cursor: pointer;
-            border: 1px solid rgba(168, 85, 247, 0.15);
+            justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
         }
-        .chat-list {
+        .btn-profile:active { transform: scale(0.9); }
+
+        .btn-profile .avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-profile svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--gold-light);
+        }
+
+        .btn-profile .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e74c3c;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-badge 2s infinite;
+            z-index: 2;
+        }
+
+        @keyframes pulse-badge {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Зона дилера */
+        .dealer-zone {
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            padding: 4px 0 2px;
+        }
+
+        .zone-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(200,180,140,0.7);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .zone-label .icon-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0.7;
+        }
+
+        .cards-row {
+            display: flex;
+            justify-content: center;
             gap: 10px;
-            margin-top: 16px;
+            min-height: 80px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Карты */
+        .card {
+            width: 62px;
+            height: 88px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px 7px;
+            box-shadow: 2px 4px 12px var(--card-shadow);
+            font-weight: 700;
+            transition: transform 0.4s ease, opacity 0.3s ease;
+            animation: dealCard 0.4s ease-out;
+        }
+
+        @keyframes dealCard {
+            from { transform: translateY(-50px) rotate(-15deg) scale(0.5); opacity: 0; }
+            to { transform: translateY(0) rotate(0) scale(1); opacity: 1; }
+        }
+
+        .card.flipping {
+            animation: flipCard 0.5s ease-in-out;
+        }
+
+        @keyframes flipCard {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0deg); }
+        }
+
+        .card-back {
+            background: linear-gradient(145deg, #1e3d6b, #0f2340);
+            border: 3px solid #3d6ea8;
+            background-image: repeating-linear-gradient(
+                40deg,
+                transparent,
+                transparent 4px,
+                rgba(255,255,255,0.03) 4px,
+                rgba(255,255,255,0.03) 8px
+            );
+        }
+
+        .card-back::after {
+            content: '';
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 4px;
+        }
+
+        .card .rank {
+            font-size: 16px;
+            line-height: 1;
+        }
+        .card .suit-center {
+            font-size: 26px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
-        .chat-list span {
-            background: rgba(168, 85, 247, 0.12);
-            padding: 8px 18px;
-            border-radius: 60px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .rules-content {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #d1d5db;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-        .rules-section h4 {
-            background: linear-gradient(135deg, #c084fc, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 20px 0 12px 0;
-            font-size: 15px;
-            font-weight: 700;
-        }
-        .punishment {
-            color: #fbbf24;
-            font-weight: 600;
-        }
-        
-        .admin-user-row {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 14px;
-            border-radius: 28px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-label {
+        .card .suit-bottom {
             font-size: 12px;
-            color: #9ca3af;
-            margin-bottom: 8px;
-            display: block;
+            text-align: right;
+            line-height: 1;
+            transform: rotate(180deg);
+        }
+        .card.red { color: var(--red); }
+        .card.black { color: var(--black); }
+
+        /* Счёт */
+        .score-tag {
+            display: inline-block;
+            font-size: 12px;
             font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            transition: all 0.3s ease;
         }
-        .form-input {
-            width: 100%;
-            background: #0a0a14;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
-            padding: 14px 18px;
-            color: white;
-            font-size: 15px;
-            outline: none;
-        }
-        .form-input:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
-        }
-        .bank-select {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .bank-option {
-            background: #0a0a14;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
-            padding: 12px;
+        .score-tag.normal { background: rgba(0,0,0,0.5); color: var(--text); }
+        .score-tag.good { background: rgba(39,174,96,0.3); color: #5dde8e; border: 1px solid rgba(39,174,96,0.5); }
+        .score-tag.bad { background: rgba(217,64,64,0.3); color: #f07070; border: 1px solid rgba(217,64,64,0.5); }
+        .score-tag.neutral { background: rgba(201,168,76,0.25); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.4); }
+
+        /* Сообщение */
+        .message-area {
             text-align: center;
-            cursor: pointer;
-            font-size: 14px;
+            min-height: 26px;
+            font-size: 15px;
             font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 5;
+            color: var(--gold-light);
         }
-        .bank-option.selected {
-            border-color: #a855f7;
-            background: rgba(168, 85, 247, 0.2);
-            color: #c084fc;
+
+        /* Зона игрока */
+        .player-zone {
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            padding: 2px 0 8px;
+        }
+
+        /* Ставка */
+        .bet-display {
+            text-align: center;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            min-height: 18px;
+            position: relative;
+            z-index: 10;
+        }
+        .bet-display.active { color: var(--gold-light); }
+
+        /* Фишки */
+        .chips-bar {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding: 6px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .chip {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+            border: 3px dashed var(--chip-border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        .chip:active { transform: scale(0.88); }
+        .chip.selected {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.5), 0 0 18px rgba(224,200,120,0.7);
+            border-color: rgba(224,200,120,0.8);
+        }
+
+        .chip-1  { background: radial-gradient(circle at 38% 35%, #f0f0f0, #c0c0c0, #888); color: #333; text-shadow: none; }
+        .chip-5  { background: radial-gradient(circle at 38% 35%, #ff6060, #c0392b, #6e0000); }
+        .chip-10 { background: radial-gradient(circle at 38% 35%, #64b5f6, #2471a3, #0a3355); }
+        .chip-25 { background: radial-gradient(circle at 38% 35%, #66d998, #1e8449, #082f18); }
+        .chip-100{ background: radial-gradient(circle at 38% 35%, #707070, #383838, #111); }
+
+        /* Конфетти */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 200;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall 1.5s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        /* Частицы фишек при выигрыше */
+        .chip-particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 16px;
+            animation: chipFly 0.8s ease-out forwards;
+            z-index: 50;
+        }
+
+        @keyframes chipFly {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Кнопки */
+        .actions-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 4px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn {
+            padding: 10px 0;
+            width: 70px;
+            border-radius: 25px;
+            border: none;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            font-family: var(--font);
+            position: relative;
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+        }
+        .btn:active { transform: scale(0.93); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+        .btn-deal {
+            width: auto;
+            padding: 12px 36px;
+            font-size: 15px;
+            background: linear-gradient(180deg, #dbb850, #a87d1a);
+            color: #1a0e00;
+            box-shadow: 0 4px 20px rgba(200,160,50,0.5);
+            animation: glowPulse 2.2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(200,160,50,0.5); }
+            50% { box-shadow: 0 4px 35px rgba(200,160,50,0.85); }
+        }
+
+        .btn-hit    { background: linear-gradient(180deg, #d94a4a, #a82020); }
+        .btn-stand  { background: linear-gradient(180deg, #3cb868, #1e7a3e); }
+        .btn-double { background: linear-gradient(180deg, #e0a020, #b0740c); }
+        .btn-split  { background: linear-gradient(180deg, #9b59b6, #6c2d82); }
+        .btn-new    { 
+            width: auto;
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ==================== СТРАНИЦА ПРОФИЛЯ ==================== */
+        .page-profile {
+            transform: translateX(100%);
+            opacity: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, #0f1f0f 0%, #0a150a 40%, #060d06 100%);
+            border: 4px solid rgba(201,168,76,0.3);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        .page-profile.active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .profile-header-bg {
+            position: relative;
+            background: linear-gradient(180deg, #1a3a1a, #0d2a0d);
+            padding: 30px 24px 24px;
+            text-align: center;
+            border-bottom: 2px solid rgba(201,168,76,0.3);
+        }
+
+        .profile-back-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: var(--text);
+            font-size: 20px;
+        }
+        .profile-back-btn:active { background: rgba(255,255,255,0.15); transform: scale(0.9); }
+
+        .profile-avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--gold);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            background: #1a1a1a;
+        }
+
+        .profile-avatar-placeholder {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+
+        .profile-avatar-placeholder svg {
+            width: 50px;
+            height: 50px;
+            fill: rgba(255,255,255,0.3);
+        }
+
+        .profile-level-badge {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dbb850, #a87d1a);
+            border: 2px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a0e00;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .profile-username {
+            font-size: 13px;
+            color: var(--text-dim);
+            letter-spacing: 0.5px;
+        }
+
+        .profile-stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .profile-stat-mini {
+            text-align: center;
+        }
+
+        .profile-stat-mini .val {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+
+        .profile-stat-mini .lbl {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+        }
+
+        .profile-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .profile-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+
+        /* Статистика в профиле */
+        .stats-grid-full {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card-full {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card-full .val {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+        .stat-card-full .lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Бонус */
+        .bonus-card-full {
+            background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+            border: 1.5px solid rgba(201,168,76,0.4);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .bonus-icon-big {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .bonus-amount-big {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+
+        .bonus-timer {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .bonus-timer.ready {
+            color: #5dde8e;
+            animation: pulse-bonus 1.5s infinite;
+        }
+
+        @keyframes pulse-bonus {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .btn-bonus-full {
+            margin-top: 14px;
+            padding: 12px 36px;
+            border-radius: 25px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: var(--font);
+            background: linear-gradient(180deg, #dbb850, #a87d1a);
+            color: #1a0e00;
+            box-shadow: 0 4px 15px rgba(200,160,50,0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-bonus-full:active { transform: scale(0.93); }
+        .btn-bonus-full:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-reset-full {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-dim);
+            font-size: 12px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-family: var(--font);
+            transition: all 0.2s ease;
+        }
+        .btn-reset-full:active { background: rgba(255,255,255,0.1); }
+
+        /* Адаптив */
+        @media (max-width: 420px) {
+            .table {
+                border-radius: 120px / 20px;
+                padding: 14px 16px;
+                border-width: 10px;
+            }
+            .table::before { top: 12px; left: 24px; right: 24px; bottom: 12px; border-radius: 110px / 16px; }
+            .table::after { top: 18px; left: 30px; right: 30px; bottom: 18px; border-radius: 106px / 14px; }
+
+            .card {
+                width: 48px;
+                height: 68px;
+                padding: 4px 5px;
+                border-radius: 6px;
+            }
+            .card .rank { font-size: 13px; }
+            .card .suit-center { font-size: 20px; }
+            .card .suit-bottom { font-size: 10px; }
+
+            .chip {
+                width: 42px;
+                height: 42px;
+                font-size: 12px;
+            }
+            .btn { width: 56px; padding: 8px 0; font-size: 11px; }
+            .btn-deal { padding: 10px 28px; font-size: 14px; }
+            .balance-value { font-size: 16px; }
+            .balance-panel { padding: 6px 14px; }
         }
     </style>
 </head>
 <body>
-    <div class="splash-screen" id="splash">
-        <div class="splash-logo">
-            <div class="splash-icon"><i class="fas fa-chart-line"></i></div>
-            <h1>JANGEL 3.1</h1>
-            <p>обмен валют</p>
-            <div class="loading-bar"><div class="loading-progress" id="loadProgress"></div></div>
-        </div>
-    </div>
-
-    <div class="main-content" id="main">
-        <div class="header">
-            <h1>JANGEL 3.1</h1>
-            <div class="welcome-text"><i class="fas fa-hand-wave"></i> Добро пожаловать! На связи: <span>@JANGEL_3_1</span></div>
-        </div>
-
-        <div id="panelExchange" class="panel active">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-arrow-down"></i> ОБМЕН USDT</div>
-                <div class="rate-row"><span class="rate-amount">от 7$</span><span class="rate-price">76 ₽</span></div>
-                <div class="rate-row"><span class="rate-amount">от 20$</span><span class="rate-price">77 ₽</span></div>
-                <div class="rate-row"><span class="rate-amount">от 50$</span><span class="rate-price">78 ₽</span></div>
-                <div class="rate-row"><span class="rate-amount">от 100$</span><span class="rate-price">79 ₽</span></div>
-
-                <div class="calculator">
-                    <div class="calc-label"><i class="fas fa-calculator"></i> Калькулятор обмена</div>
-                    <input type="number" id="usdInput" class="calc-input" placeholder="Сумма в USDT" value="10" step="1">
-                    <div class="calc-result">
-                        <div class="calc-result-value" id="rubResult">760 ₽</div>
-                        <div style="font-size: 10px; color: #6b7280; margin-top: 6px;">вы получите в рублях</div>
+    <!-- ==================== СТРАНИЦА СТОЛА ==================== -->
+    <div class="page page-table" id="pageTable">
+        <div class="table" id="tableEl">
+            <!-- Верхняя панель -->
+            <div class="top-bar">
+                <div class="balance-panel">
+                    <div class="balance-icon"></div>
+                    <div class="balance-info">
+                        <div class="balance-label">Баланс</div>
+                        <div class="balance-value" id="balanceDisplay">1000</div>
                     </div>
                 </div>
+                <button class="btn-profile" id="btnProfile" title="Профиль">
+                    <img class="avatar-small hidden" id="avatarSmall" src="" alt="">
+                    <svg id="profileIconDefault" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                    <span class="badge hidden" id="bonusBadge">!</span>
+                </button>
+            </div>
 
-                <div class="action-buttons">
-                    <button class="btn" id="exchangeBtn"><i class="fas fa-exchange-alt"></i> Обменять USDT</button>
-                    <button class="btn btn-secondary" id="chatServiceBtn"><i class="fas fa-comments"></i> Чат услуг</button>
-                    <button class="btn" id="contactBtn"><i class="fab fa-telegram"></i> Связаться</button>
+            <!-- Дилер -->
+            <div class="dealer-zone">
+                <div class="zone-label">
+                    <span class="icon-dot"></span> Дилер <span class="icon-dot"></span>
                 </div>
-
-                <div class="reputation-block"><i class="fas fa-star" style="color: #fbbf24;"></i> <span> Репутация 4000+</span></div>
-                <div class="info-text"><i class="fas fa-exclamation-triangle"></i> Черные монеты запрещены</div>
+                <div class="cards-row" id="dealerCards"></div>
+                <div class="score-tag hidden normal" id="dealerScore"></div>
             </div>
 
-            <div class="card tips-card">
-                <div class="card-title" style="font-size: 14px; margin-bottom: 12px;"><i class="fas fa-lightbulb"></i> Как это работает?</div>
-                <div class="tip-item">
-                    <div class="tip-icon"><i class="fas fa-calculator"></i></div>
-                    <div class="tip-text"><div class="tip-title">1. Выберите сумму USDT</div><div class="tip-desc">Введите нужное количество USDT или выберите из быстрых вариантов</div></div>
+            <!-- Сообщение -->
+            <div class="message-area" id="resultMessage"></div>
+
+            <!-- Игрок -->
+            <div class="player-zone">
+                <div class="zone-label">
+                    <span class="icon-dot"></span> Игрок <span class="icon-dot"></span>
                 </div>
-                <div class="tip-item">
-                    <div class="tip-icon"><i class="fas fa-credit-card"></i></div>
-                    <div class="tip-text"><div class="tip-title">2. Оплатите USDT</div><div class="tip-desc">Нажмите "Оплатить счет" — введите ТОЧНУЮ сумму USDT и укажите КОД в комментарии</div></div>
-                </div>
-                <div class="tip-item">
-                    <div class="tip-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="tip-text"><div class="tip-title">3. Подтвердите оплату</div><div class="tip-desc">После оплаты нажмите "Я оплатил(а)" и укажите номер телефона для вывода рублей</div></div>
-                </div>
+                <div class="cards-row" id="playerCards"></div>
+                <div class="score-tag hidden normal" id="playerScore"></div>
             </div>
-        </div>
 
-        <div id="panelMyOrders" class="panel">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-list"></i> Мои заявки</div>
-                <div id="myOrdersList"><div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div></div>
+            <!-- Ставка -->
+            <div class="bet-display" id="currentBetDisplay">Ставка не сделана</div>
+
+            <!-- Фишки -->
+            <div class="chips-bar" id="chipsRow">
+                <div class="chip chip-1" data-value="1">1</div>
+                <div class="chip chip-5 selected" data-value="5">5</div>
+                <div class="chip chip-10" data-value="10">10</div>
+                <div class="chip chip-25" data-value="25">25</div>
+                <div class="chip chip-100" data-value="100">100</div>
             </div>
-        </div>
 
-        <div id="panelAdmin" class="panel">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-crown"></i> Админ панель</div>
-                <div id="adminOrdersList"><div class="info-text"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div></div>
+            <!-- Кнопки -->
+            <div class="actions-bar" id="actionsRow">
+                <button class="btn btn-deal" id="btnDeal">Сдать карты</button>
+                <button class="btn btn-hit hidden" id="btnHit">Ещё</button>
+                <button class="btn btn-stand hidden" id="btnStand">Хватит</button>
+                <button class="btn btn-double hidden" id="btnDouble">Дабл</button>
+                <button class="btn btn-split hidden" id="btnSplit">Сплит</button>
+                <button class="btn btn-new hidden" id="btnNewGame">Заново</button>
             </div>
-        </div>
-
-        <div id="panelPrefixes" class="panel">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-hashtag"></i> Префиксы</div>
-                <div class="prefix-list" id="prefixList"></div>
-            </div>
-        </div>
-
-        <div id="panelGift" class="panel">
-            <div class="card">
-                <div class="card-title" style="justify-content: center;"><i class="fas fa-gift"></i> Интуитивный подарок</div>
-                <div class="gift-bear"><i class="fas fa-bear"></i> 🧸</div>
-                <div class="info-text"><i class="fas fa-comment-dots"></i> Оставляй отзыв в проверенных чатах и получай <strong>плюшевого мишку Telegram</strong> в подарок!</div>
-                <div class="chat-list"><span>Jess</span><span>FRK</span><span>OLD</span><span>Вера Отзывы</span></div>
-                <div class="info-text"><i class="fas fa-info-circle"></i> После отзыва напиши мне — отправлю мишку</div>
-            </div>
-        </div>
-
-        <div id="panelRules" class="panel">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-book"></i> Правила чата</div>
-                <div class="rules-content" id="rulesContent"></div>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <button class="nav-btn active" id="navExchange"><i class="fas fa-exchange-alt"></i><span>Обмен</span></button>
-            <button class="nav-btn" id="navMyOrders"><i class="fas fa-clock"></i><span>Заявки</span></button>
-            <button class="nav-btn" id="navPrefixes"><i class="fas fa-at"></i><span>Префиксы</span></button>
-            <button class="nav-btn" id="navGift"><i class="fas fa-gift"></i><span>Подарок</span></button>
-            <button class="nav-btn" id="navRules"><i class="fas fa-book"></i><span>Правила</span></button>
         </div>
     </div>
 
-    <div class="floating-admin" id="floatingAdmin" style="display: none;">
-        <i class="fas fa-crown"></i>
+    <!-- Конфетти-контейнер -->
+    <div class="confetti-container hidden" id="confettiContainer"></div>
+
+    <!-- ==================== СТРАНИЦА ПРОФИЛЯ ==================== -->
+    <div class="page page-profile" id="pageProfile">
+        <!-- Шапка -->
+        <div class="profile-header-bg">
+            <button class="profile-back-btn" id="btnBackToTable">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            
+            <div class="profile-avatar-wrapper">
+                <img class="profile-avatar hidden" id="profileAvatar" src="" alt="">
+                <div class="profile-avatar-placeholder" id="profileAvatarPlaceholder">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                </div>
+                <div class="profile-level-badge" id="profileLevel">1</div>
+            </div>
+            
+            <div class="profile-name" id="profileName">Игрок</div>
+            <div class="profile-username" id="profileUsername"></div>
+            
+            <div class="profile-stats-row">
+                <div class="profile-stat-mini">
+                    <div class="val" id="headerBalance">1000</div>
+                    <div class="lbl">Баланс</div>
+                </div>
+                <div class="profile-stat-mini">
+                    <div class="val" id="headerGames">0</div>
+                    <div class="lbl">Игр</div>
+                </div>
+                <div class="profile-stat-mini">
+                    <div class="val" id="headerWinRate">-</div>
+                    <div class="lbl">Винрейт</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контент -->
+        <div class="profile-content">
+            <!-- Бонус -->
+            <div>
+                <div class="profile-section-title">Ежедневный бонус</div>
+                <div class="bonus-card-full">
+                    <div class="bonus-icon-big">&#127873;</div>
+                    <div class="bonus-amount-big">+100</div>
+                    <div class="bonus-timer" id="bonusTimer">Загрузка...</div>
+                    <button class="btn-bonus-full" id="btnClaimBonus" disabled>Забрать</button>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div>
+                <div class="profile-section-title">Подробная статистика</div>
+                <div class="stats-grid-full">
+                    <div class="stat-card-full">
+                        <div class="val" id="statGames">0</div>
+                        <div class="lbl">Игр сыграно</div>
+                    </div>
+                    <div class="stat-card-full">
+                        <div class="val" id="statWins">0</div>
+                        <div class="lbl">Побед</div>
+                    </div>
+                    <div class="stat-card-full">
+                        <div class="val" id="statLosses">0</div>
+                        <div class="lbl">Поражений</div>
+                    </div>
+                    <div class="stat-card-full">
+                        <div class="val" id="statWinRate">-</div>
+                        <div class="lbl">Винрейт</div>
+                    </div>
+                    <div class="stat-card-full">
+                        <div class="val" id="statMaxWin">0</div>
+                        <div class="lbl">Макс. выигрыш</div>
+                    </div>
+                    <div class="stat-card-full">
+                        <div class="val" id="statStreak">0</div>
+                        <div class="lbl">Серия побед</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-reset-full" id="btnResetStats">Сбросить статистику</button>
+        </div>
     </div>
 
     <script>
         (function() {
-            const SUPABASE_URL = 'https://aoogkjqdsbozaeblxloc.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvb2dranFkc2JvemFlYmx4bG9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjY5MTEsImV4cCI6MjA4OTcwMjkxMX0.w8Jm5AS8aW3yjD6Uw8iGSnlHYQQU-BCpfSqIdowhA2Y';
+            // ==================== Telegram WebApp ====================
+            const tg = window.Telegram?.WebApp;
+            let tgUser = null;
             
-            const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const tg = window.Telegram.WebApp;
-            
-            let currentUser = null;
-            const ADMIN_ID = 7442684868;
-            const PAYMENT_LINK = 'http://t.me/send?start=IVk5RW4FMXI6';
-            let activeToast = null;
-            
-            function getRate(amount) {
-                if (amount < 7) return 76;
-                if (amount < 20) return 76;
-                if (amount < 50) return 77;
-                if (amount < 100) return 78;
-                return 79;
-            }
-            
-            function calculateRub() {
-                let usd = parseFloat(document.getElementById('usdInput').value) || 0;
-                const rate = getRate(usd);
-                const rub = Math.floor(usd * rate);
-                document.getElementById('rubResult').innerHTML = `${rub} ₽`;
-                return { usd, rub, rate };
-            }
-            
-            function generatePaymentCode() {
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
-                let code = '';
-                for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-                return code;
-            }
-            
-            function showToast(msg, isError = false) {
-                if (activeToast) activeToast.remove();
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.style.background = isError ? '#ef4444' : '#10b981';
-                toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${msg}`;
-                document.body.appendChild(toast);
-                activeToast = toast;
-                setTimeout(() => { if (toast && toast.remove) toast.remove(); if (activeToast === toast) activeToast = null; }, 2800);
-            }
-            
-            function copyToClipboard(text) {
-                navigator.clipboard.writeText(text).then(() => showToast('Скопировано: ' + text));
-            }
-            
-            async function loadMyOrders() {
-                if (!currentUser) return;
-                const { data } = await supabaseClient.from('exchange_requests').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-                const container = document.getElementById('myOrdersList');
-                if (!data || data.length === 0) { container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет заявок</div>'; return; }
-                const statusIcon = { pending: '<i class="fas fa-clock"></i>', paid: '<i class="fas fa-check-circle"></i>', completed: '<i class="fas fa-check-double"></i>', cancelled: '<i class="fas fa-times-circle"></i>' };
-                const statusText = { pending: 'Ожидает', paid: 'Оплачено', completed: 'Завершено', cancelled: 'Отменено' };
-                container.innerHTML = data.map(order => `<div class="admin-request"><div class="request-header"><span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0,8)}</span><span class="request-status">${statusIcon[order.status]} ${statusText[order.status]}</span></div><div class="request-details"><i class="fas fa-coins"></i> ${order.amount_usd} USDT → ${order.amount_rub} ₽<br><i class="fas fa-key"></i> Код: ${order.secret_code}</div></div>`).join('');
-            }
-            
-            async function loadAdminOrders() {
-                if (!currentUser || currentUser.id !== ADMIN_ID) return;
-                const { data } = await supabaseClient.from('exchange_requests').select('*').in('status', ['pending', 'paid']).order('created_at', { ascending: false });
-                const container = document.getElementById('adminOrdersList');
-                if (!data || data.length === 0) { container.innerHTML = '<div class="info-text"><i class="fas fa-inbox"></i> Нет активных заявок</div>'; return; }
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                if (tg.colorScheme === 'dark') document.body.style.background = '#050505';
                 
-                container.innerHTML = data.map(order => {
-                    let userNick = order.username || '';
-                    if (userNick && !userNick.startsWith('@')) userNick = '@' + userNick;
-                    if (!userNick || userNick === '@') userNick = 'User_' + String(order.user_id).slice(-6);
+                tg.BackButton.show();
+                tg.BackButton.onClick(() => {
+                    if (pageProfile.classList.contains('active')) {
+                        closeProfile();
+                    } else {
+                        if (confirm('Покинуть стол?')) tg.close();
+                    }
+                });
+                
+                // Получаем данные пользователя
+                if (tg.initDataUnsafe?.user) {
+                    tgUser = tg.initDataUnsafe.user;
+                }
+            }
+
+            // ==================== Хранилище ====================
+            const LS = {
+                get(key, def) {
+                    try { const v = localStorage.getItem('bj_'+key); return v !== null ? JSON.parse(v) : def; }
+                    catch(e) { return def; }
+                },
+                set(key, val) {
+                    try { localStorage.setItem('bj_'+key, JSON.stringify(val)); } catch(e) {}
+                }
+            };
+
+            function getUserLevel() {
+                const totalGames = stats.games;
+                if (totalGames >= 500) return 10;
+                if (totalGames >= 200) return 7;
+                if (totalGames >= 100) return 5;
+                if (totalGames >= 50) return 4;
+                if (totalGames >= 20) return 3;
+                if (totalGames >= 5) return 2;
+                return 1;
+            }
+
+            // ==================== Состояние ====================
+            const STATE = { BETTING: 'betting', PLAYING: 'playing', DEALER: 'dealer', END: 'end' };
+            let gameState = STATE.BETTING;
+            let balance = LS.get('balance', 1000);
+            let currentBet = 0;
+            let selectedChip = 5;
+            let deck = [];
+            let playerHand = [];
+            let dealerHand = [];
+
+            let stats = LS.get('stats', {
+                games: 0, wins: 0, losses: 0, pushes: 0,
+                maxWin: 0, currentStreak: 0, bestStreak: 0
+            });
+
+            const BONUS_COOLDOWN = 24 * 60 * 60 * 1000;
+            let lastBonusTime = LS.get('lastBonus', 0);
+
+            // ==================== DOM ====================
+            const $ = id => document.getElementById(id);
+            const els = {
+                // Стол
+                pageTable: $('pageTable'),
+                pageProfile: $('pageProfile'),
+                table: $('tableEl'),
+                balance: $('balanceDisplay'),
+                dealerCards: $('dealerCards'),
+                playerCards: $('playerCards'),
+                dealerScore: $('dealerScore'),
+                playerScore: $('playerScore'),
+                result: $('resultMessage'),
+                betDisplay: $('currentBetDisplay'),
+                chipsRow: $('chipsRow'),
+                actionsRow: $('actionsRow'),
+                btnDeal: $('btnDeal'),
+                btnHit: $('btnHit'),
+                btnStand: $('btnStand'),
+                btnDouble: $('btnDouble'),
+                btnSplit: $('btnSplit'),
+                btnNew: $('btnNewGame'),
+                btnProfile: $('btnProfile'),
+                avatarSmall: $('avatarSmall'),
+                profileIconDefault: $('profileIconDefault'),
+                bonusBadge: $('bonusBadge'),
+                confettiContainer: $('confettiContainer'),
+                // Профиль
+                btnBackToTable: $('btnBackToTable'),
+                profileAvatar: $('profileAvatar'),
+                profileAvatarPlaceholder: $('profileAvatarPlaceholder'),
+                profileName: $('profileName'),
+                profileUsername: $('profileUsername'),
+                profileLevel: $('profileLevel'),
+                headerBalance: $('headerBalance'),
+                headerGames: $('headerGames'),
+                headerWinRate: $('headerWinRate'),
+                bonusTimer: $('bonusTimer'),
+                btnClaimBonus: $('btnClaimBonus'),
+                statGames: $('statGames'),
+                statWins: $('statWins'),
+                statLosses: $('statLosses'),
+                statWinRate: $('statWinRate'),
+                statMaxWin: $('statMaxWin'),
+                statStreak: $('statStreak'),
+                btnResetStats: $('btnResetStats'),
+            };
+
+            // ==================== Профиль пользователя ====================
+            function loadUserProfile() {
+                if (tgUser) {
+                    // Никнейм
+                    const displayName = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
+                    els.profileName.textContent = displayName || 'Игрок';
                     
-                    return `
-                    <div class="admin-request">
-                        <div class="request-header">
-                            <span class="request-id"><i class="fas fa-hashtag"></i> ${order.id.slice(0,8)}</span>
-                            <span class="request-status">${order.status === 'pending' ? '<i class="fas fa-hourglass-half"></i> Ожидает' : '<i class="fas fa-check-circle"></i> Оплачено'}</span>
-                        </div>
-                        <div class="request-details">
-                            <div class="admin-user-row">
-                                <i class="fas fa-user-circle" style="color: #f59e0b; font-size: 18px;"></i>
-                                <span class="user-nickname">${escapeHtml(userNick)}</span>
-                                <span class="user-id-small">ID: ${order.user_id}</span>
-                            </div>
-                            <i class="fas fa-coins"></i> ${order.amount_usd} USDT → ${order.amount_rub} ₽<br>
-                            <div class="phone-copy-row">
-                                <span><i class="fas fa-phone"></i> ${order.phone}</span>
-                                <button class="copy-small-btn" onclick="window.copyPhone('${order.phone}')"><i class="fas fa-copy"></i> Копировать</button>
-                            </div>
-                            <i class="fas fa-university"></i> ${order.bank}<br>
-                            <i class="fas fa-key"></i> <strong style="color:#c084fc">${order.secret_code}</strong>
-                        </div>
-                        <div class="request-actions">
-                            ${order.status === 'pending' ? `
-                                <button class="small-btn btn-success" onclick="window.markPaid('${order.id}')"><i class="fas fa-check"></i> Оплачено</button>
-                                <button class="small-btn btn-danger" onclick="window.cancelOrder('${order.id}')"><i class="fas fa-times"></i> Отмена</button>
-                            ` : ''}
-                            ${order.status === 'paid' ? `
-                                <button class="small-btn btn-success" onclick="window.completeOrder('${order.id}')"><i class="fas fa-check-double"></i> Завершить</button>
-                            ` : ''}
-                        </div>
-                    </div>
-                `}).join('');
-            }
-            
-            function escapeHtml(str) {
-                if (!str) return '';
-                return str.replace(/[&<>]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    return m;
-                });
-            }
-            
-            window.copyPhone = (phone) => copyToClipboard(phone);
-            window.markPaid = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', id); showToast('Отмечено как оплачено'); loadAdminOrders(); };
-            window.completeOrder = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'completed' }).eq('id', id); showToast('Обмен завершен'); loadAdminOrders(); };
-            window.cancelOrder = async (id) => { await supabaseClient.from('exchange_requests').update({ status: 'cancelled' }).eq('id', id); showToast('Заявка отменена'); loadAdminOrders(); };
-            
-            function showAmountSelector() {
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <i class="fas fa-dollar-sign" style="font-size:44px;color:#c084fc;"></i>
-                        <h3 style="margin:12px 0 16px;font-size:20px;font-weight:800;">Выберите сумму USDT</h3>
-                        <div class="amount-selector">
-                            <div class="amount-option" data-amount="10">10 USDT</div>
-                            <div class="amount-option" data-amount="20">20 USDT</div>
-                            <div class="amount-option" data-amount="50">50 USDT</div>
-                            <div class="amount-option" data-amount="100">100 USDT</div>
-                            <div class="amount-option" data-amount="200">200 USDT</div>
-                            <div class="amount-option" data-amount="500">500 USDT</div>
-                        </div>
-                        <div style="margin:12px 0;">
-                            <input type="number" id="customAmount" class="form-input" placeholder="Или введите свою сумму" style="padding:12px;">
-                        </div>
-                        <button class="btn" id="proceedToPaymentBtn" style="margin-top:8px;"><i class="fas fa-arrow-right"></i> Далее</button>
-                        <button class="btn btn-secondary" id="closeAmountBtn" style="margin-top:8px;"><i class="fas fa-times"></i> Отмена</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-                let selectedAmountValue = null;
-                document.querySelectorAll('.amount-option').forEach(opt => { 
-                    opt.onclick = () => { 
-                        document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected')); 
-                        opt.classList.add('selected'); 
-                        selectedAmountValue = parseInt(opt.dataset.amount); 
-                        document.getElementById('customAmount').value = ''; 
-                    }; 
-                });
-                document.getElementById('customAmount').oninput = (e) => { 
-                    document.querySelectorAll('.amount-option').forEach(o => o.classList.remove('selected')); 
-                    selectedAmountValue = parseInt(e.target.value); 
-                };
-                document.getElementById('proceedToPaymentBtn').onclick = () => { 
-                    if (!selectedAmountValue || selectedAmountValue < 7) { 
-                        showToast('Минимальная сумма 7 USDT', true); 
-                        return; 
-                    } 
-                    modal.remove(); 
-                    showPaymentScreen(selectedAmountValue); 
-                };
-                document.getElementById('closeAmountBtn').onclick = () => modal.remove();
-            }
-            
-            function showPaymentScreen(amount) {
-                const rubAmount = Math.floor(amount * getRate(amount));
-                const paymentCode = generatePaymentCode();
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content payment-modal">
-                        <div class="big-icon"><i class="fas fa-credit-card"></i></div>
-                        <div style="font-size:11px;color:#9ca3af;">К оплате</div>
-                        <div class="payment-amount">${amount} USDT</div>
-                        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">≈ ${rubAmount} ₽ по курсу</div>
+                    const username = tgUser.username ? '@' + tgUser.username : '';
+                    els.profileUsername.textContent = username;
+                    
+                    // Аватарка
+                    if (tgUser.photo_url) {
+                        els.profileAvatar.src = tgUser.photo_url;
+                        els.profileAvatar.classList.remove('hidden');
+                        els.profileAvatarPlaceholder.classList.add('hidden');
                         
-                        <div class="warning-box">
-                            <div class="warning-title"><i class="fas fa-exclamation-triangle"></i> ВАЖНО!</div>
-                            <p><i class="fas fa-check-circle"></i> Оплатите <strong>ровно ${amount} USDT</strong> — другую сумму не принимаем</p>
-                            <p><i class="fas fa-key"></i> Обязательно укажите код <strong>${paymentCode}</strong> в комментарии к платежу</p>
-                            <p><i class="fas fa-clock"></i> После оплаты нажмите "Я оплатил(а)" и укажите реквизиты для вывода рублей</p>
-                        </div>
-                        
-                        <div class="payment-code-block">
-                            <div class="label" style="font-size:10px;color:#f59e0b;"><i class="fas fa-key"></i> Код платежа (обязателен!)</div>
-                            <div class="payment-code-large">${paymentCode}</div>
-                            <button class="btn btn-secondary compact-btn" id="copyCodeBtn" style="margin-top:8px;"><i class="fas fa-copy"></i> Скопировать код</button>
-                        </div>
-                        
-                        <button class="btn btn-warning compact-btn" id="payBillBtn" style="margin-top:10px;"><i class="fas fa-credit-card"></i> Оплатить ${amount} USDT</button>
-                        <button class="btn btn-success compact-btn" id="simpleContinueBtn" style="margin-top:6px;"><i class="fas fa-check-circle"></i> Я оплатил(а)</button>
-                        <button class="btn btn-secondary compact-btn" id="simpleCancelBtn" style="margin-top:6px;"><i class="fas fa-arrow-left"></i> Назад</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-                document.getElementById('copyCodeBtn').onclick = () => copyToClipboard(paymentCode);
-                document.getElementById('payBillBtn').onclick = () => window.open(PAYMENT_LINK, '_blank');
-                document.getElementById('simpleContinueBtn').onclick = () => { modal.remove(); showDetailsForm(amount, rubAmount, paymentCode); };
-                document.getElementById('simpleCancelBtn').onclick = () => modal.remove();
+                        // Маленькая аватарка на кнопке
+                        els.avatarSmall.src = tgUser.photo_url;
+                        els.avatarSmall.classList.remove('hidden');
+                        els.profileIconDefault.classList.add('hidden');
+                    }
+                } else {
+                    // Если не в Telegram — показываем заглушку
+                    els.profileName.textContent = 'Гость';
+                    els.profileUsername.textContent = '';
+                }
             }
-            
-            function showDetailsForm(amount, rubAmount, paymentCode) {
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content payment-modal">
-                        <i class="fas fa-user-check" style="font-size:36px;color:#c084fc;"></i>
-                        <h3 style="margin:12px 0;font-size:16px;font-weight:700;">Куда перевести рубли?</h3>
-                        <div class="form-group" style="margin-bottom:12px;">
-                            <div class="form-label" style="font-size:11px;"><i class="fas fa-phone"></i> Номер телефона (СБП) для вывода</div>
-                            <input type="tel" id="simplePhone" class="form-input" placeholder="+7 XXX XXX XX XX" style="padding:10px;font-size:14px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom:12px;">
-                            <div class="form-label" style="font-size:11px;"><i class="fas fa-university"></i> Банк получателя</div>
-                            <div class="bank-select" id="simpleBankSelect" style="gap:6px;">
-                                <div class="bank-option" data-bank="Сбер" style="padding:8px;">Сбер</div>
-                                <div class="bank-option" data-bank="Альфа" style="padding:8px;">Альфа</div>
-                                <div class="bank-option" data-bank="Т-банк" style="padding:8px;">Т-банк</div>
-                                <div class="bank-option" data-bank="ВТБ" style="padding:8px;">ВТБ</div>
-                            </div>
-                        </div>
-                        <div style="background:rgba(168,85,247,0.1);border-radius:20px;padding:10px;margin:10px 0;display:flex;justify-content:space-between;">
-                            <span style="font-size:12px;"><i class="fas fa-ruble-sign"></i> Вы получите:</span>
-                            <span style="color:#c084fc;font-weight:700;font-size:16px;">${rubAmount} ₽</span>
-                        </div>
-                        <button class="btn compact-btn" id="simpleSubmitBtn" style="padding:10px;"><i class="fas fa-paper-plane"></i> Отправить заявку</button>
-                        <button class="btn btn-secondary compact-btn" id="simpleBackBtn" style="margin-top:6px;"><i class="fas fa-arrow-left"></i> Назад</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-                let selectedBank = 'Сбер';
-                document.querySelectorAll('#simpleBankSelect .bank-option').forEach(opt => { 
-                    opt.onclick = () => { 
-                        document.querySelectorAll('#simpleBankSelect .bank-option').forEach(o => o.classList.remove('selected')); 
-                        opt.classList.add('selected'); 
-                        selectedBank = opt.dataset.bank; 
-                    }; 
-                    if (opt.dataset.bank === 'Сбер') opt.classList.add('selected'); 
-                });
-                document.getElementById('simpleSubmitBtn').onclick = async () => {
-                    const phone = document.getElementById('simplePhone').value.trim();
-                    if (!phone) { showToast('Введите номер телефона', true); return; }
-                    const { error } = await supabaseClient.from('exchange_requests').insert([{ 
-                        user_id: currentUser.id, 
-                        username: currentUser.username || currentUser.first_name, 
-                        amount_usd: amount, 
-                        amount_rub: rubAmount, 
-                        rate: getRate(amount), 
-                        phone: phone, 
-                        bank: selectedBank, 
-                        secret_code: paymentCode, 
-                        status: 'pending' 
-                    }]);
-                    if (error) { showToast('Ошибка: ' + error.message, true); return; }
-                    modal.remove();
-                    showToast('✅ Заявка создана! Оператор проверит оплату в ближайшее время');
-                    loadMyOrders();
-                    if (currentUser.id === ADMIN_ID) loadAdminOrders();
-                };
-                document.getElementById('simpleBackBtn').onclick = () => { modal.remove(); showPaymentScreen(amount); };
-            }
-            
-            const prefixes = [{ name: '@dolbaebebanuysuka', desc: 'скуп Мегафона' }, { name: '@duba_t', desc: 'скупает Макс (объём)' }];
-            function loadPrefixes() {
-                const container = document.getElementById('prefixList');
-                if (!container) return;
-                container.innerHTML = prefixes.map(p => `<div class="prefix-item" onclick="window.open('https://t.me/${p.name.replace('@', '')}', '_blank')"><i class="fab fa-telegram"></i><div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:11px;color:#9ca3af;">${p.desc}</div></div><i class="fas fa-chevron-right"></i></div>`).join('');
-            }
-            
-            function loadRules() {
-                document.getElementById('rulesContent').innerHTML = `<div class="rules-section"><h4><i class="fas fa-gavel"></i> 1. Общие положения</h4><p>1.1 Любое лицо, находящееся в одном из проектов Ja Angel, автоматически подтверждает своё согласие с настоящим сводом правил.</p><p>1.2 Срок подачи апелляции — 48 часов.</p><p>1.3 Администрация не несёт ответственности за фейковые аккаунты.</p><p>1.4 Пользователь несёт личную ответственность за действия третьих лиц.</p><p>1.5 Незнание правил не освобождает от ответственности.</p></div><div class="rules-section"><h4><i class="fas fa-ban"></i> 2. Нарушения</h4><p>2.1 Скам, обман — <span class="punishment">бан</span></p><p>2.2 Реклама без согласования — <span class="punishment">бан</span></p><p>2.3 Угрозы — <span class="punishment">бан</span></p><p>2.4 Ложные отзывы — <span class="punishment">бан</span></p><p>2.5 Оскорбления — <span class="punishment">мут 24ч</span></p><p>2.6 Азартные игры — <span class="punishment">мут 24ч</span></p><p>2.7 Обмен USDT — <span class="punishment">бан</span></p></div>`;
-            }
-            
-            function setupNav() {
-                const setActive = (panel) => {
-                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    document.getElementById(`panel${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
-                    document.getElementById(`nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`).classList.add('active');
-                    if (panel === 'myOrders') loadMyOrders();
-                    if (panel === 'admin') loadAdminOrders();
-                };
-                document.getElementById('navExchange').onclick = () => setActive('exchange');
-                document.getElementById('navMyOrders').onclick = () => setActive('myOrders');
-                document.getElementById('navPrefixes').onclick = () => setActive('prefixes');
-                document.getElementById('navGift').onclick = () => setActive('gift');
-                document.getElementById('navRules').onclick = () => setActive('rules');
-                window.setActive = setActive;
-            }
-            
-            async function init() {
-                if (tg.initDataUnsafe?.user) currentUser = tg.initDataUnsafe.user;
-                else currentUser = { id: 123456789, username: 'test_user', first_name: 'Test' };
+
+            // ==================== Навигация ====================
+            function openProfile() {
+                updateProfileAll();
+                els.pageTable.classList.add('slide-out');
+                els.pageProfile.classList.add('active');
                 
-                document.getElementById('usdInput').addEventListener('input', calculateRub);
-                document.getElementById('exchangeBtn').onclick = showAmountSelector;
-                document.getElementById('contactBtn').onclick = () => window.open('https://t.me/JANGEL_3_1', '_blank');
-                document.getElementById('chatServiceBtn').onclick = () => window.open('https://t.me/+g4iD6cclIpg3MDEy', '_blank');
+                if (tg?.BackButton) {
+                    tg.BackButton.show();
+                }
+            }
+
+            function closeProfile() {
+                els.pageTable.classList.remove('slide-out');
+                els.pageProfile.classList.remove('active');
+            }
+
+            els.btnProfile.addEventListener('click', openProfile);
+            els.btnBackToTable.addEventListener('click', closeProfile);
+
+            // ==================== Баланс ====================
+            function saveAll() {
+                LS.set('balance', balance);
+                LS.set('stats', stats);
+                LS.set('lastBonus', lastBonusTime);
+            }
+            function updateBal() {
+                els.balance.textContent = balance;
+                els.balance.style.transform = 'scale(1.12)';
+                setTimeout(() => els.balance.style.transform = 'scale(1)', 150);
+                els.headerBalance.textContent = balance;
+            }
+
+            // ==================== Профиль: обновление ====================
+            function updateProfileAll() {
+                updateProfileStats();
+                updateBonusDisplay();
+                els.profileLevel.textContent = getUserLevel();
+                els.headerBalance.textContent = balance;
+            }
+
+            function updateProfileStats() {
+                els.statGames.textContent = stats.games;
+                els.headerGames.textContent = stats.games;
+                els.statWins.textContent = stats.wins;
+                els.statLosses.textContent = stats.losses;
                 
-                loadPrefixes();
-                loadRules();
-                setupNav();
-                calculateRub();
+                const total = stats.wins + stats.losses + stats.pushes;
+                const wr = total > 0 ? Math.round(stats.wins / total * 100) + '%' : '-';
+                els.statWinRate.textContent = wr;
+                els.headerWinRate.textContent = wr;
                 
-                if (currentUser.id === ADMIN_ID) {
-                    const floatingBtn = document.getElementById('floatingAdmin');
-                    floatingBtn.style.display = 'flex';
-                    floatingBtn.onclick = () => window.setActive('admin');
+                els.statMaxWin.textContent = stats.maxWin;
+                els.statStreak.textContent = stats.currentStreak + ' / ' + stats.bestStreak;
+                els.profileLevel.textContent = getUserLevel();
+            }
+
+            els.btnResetStats.addEventListener('click', () => {
+                if (confirm('Сбросить всю статистику?')) {
+                    stats = { games:0, wins:0, losses:0, pushes:0, maxWin:0, currentStreak:0, bestStreak:0 };
+                    saveAll();
+                    updateProfileAll();
+                }
+            });
+
+            // ==================== Бонус ====================
+            function getTimeUntilBonus() {
+                const now = Date.now();
+                const nextBonus = lastBonusTime + BONUS_COOLDOWN;
+                return Math.max(0, nextBonus - now);
+            }
+
+            function updateBonusDisplay() {
+                const remaining = getTimeUntilBonus();
+                const timerEl = els.bonusTimer;
+                const btn = els.btnClaimBonus;
+                const badge = els.bonusBadge;
+
+                if (remaining === 0) {
+                    timerEl.textContent = 'Бонус доступен!';
+                    timerEl.classList.add('ready');
+                    btn.disabled = false;
+                    btn.textContent = 'Забрать +100';
+                    badge.classList.remove('hidden');
+                } else {
+                    const h = Math.floor(remaining / 3600000);
+                    const m = Math.floor((remaining % 3600000) / 60000);
+                    const s = Math.floor((remaining % 60000) / 1000);
+                    timerEl.textContent = 'Доступен через ' + h + 'ч ' + m + 'м ' + s + 'с';
+                    timerEl.classList.remove('ready');
+                    btn.disabled = true;
+                    btn.textContent = 'Забрать';
+                    badge.classList.add('hidden');
+                }
+            }
+
+            function claimBonus() {
+                if (getTimeUntilBonus() > 0) return;
+                balance += 100;
+                lastBonusTime = Date.now();
+                saveAll();
+                updateBal();
+                updateBonusDisplay();
+                updateProfileStats();
+                spawnFloatingChips(els.pageProfile.querySelector('.bonus-card-full'), 10);
+                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+
+            els.btnClaimBonus.addEventListener('click', claimBonus);
+
+            let bonusInterval = setInterval(() => {
+                if (els.pageProfile.classList.contains('active')) {
+                    updateBonusDisplay();
+                } else {
+                    const remaining = getTimeUntilBonus();
+                    if (remaining === 0) els.bonusBadge.classList.remove('hidden');
+                    else els.bonusBadge.classList.add('hidden');
+                }
+            }, 1000);
+
+            // ==================== Анимации ====================
+            function spawnConfetti() {
+                const container = els.confettiContainer;
+                container.innerHTML = '';
+                container.classList.remove('hidden');
+                
+                const colors = ['#f0d68a','#e74c3c','#2ecc71','#3498db','#f39c12','#9b59b6','#e0c878'];
+                
+                for (let i = 0; i < 60; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    piece.style.left = Math.random() * 100 + '%';
+                    piece.style.top = -(Math.random() * 40 + 10) + 'px';
+                    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    piece.style.width = (Math.random() * 10 + 6) + 'px';
+                    piece.style.height = (Math.random() * 10 + 6) + 'px';
+                    piece.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+                    piece.style.animationDelay = Math.random() * 0.5 + 's';
+                    container.appendChild(piece);
                 }
                 
-                const splash = document.getElementById('splash');
-                const main = document.getElementById('main');
-                const progress = document.getElementById('loadProgress');
-                let p = 0;
-                const interval = setInterval(() => {
-                    p += 15;
-                    progress.style.width = Math.min(p, 100) + '%';
-                    if (p >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; main.style.display = 'block'; }, 300); }, 200);
-                    }
-                }, 50);
+                setTimeout(() => {
+                    container.classList.add('hidden');
+                    container.innerHTML = '';
+                }, 2500);
             }
-            
-            try { tg.expand(); } catch(e) {}
-            init();
+
+            function spawnFloatingChips(sourceEl, count = 8) {
+                if (!sourceEl) return;
+                const rect = sourceEl.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'chip-particle';
+                    particle.textContent = '\uD83E\uDE99';
+                    particle.style.position = 'fixed';
+                    particle.style.left = cx + 'px';
+                    particle.style.top = cy + 'px';
+                    particle.style.setProperty('--dx', (Math.random() - 0.5) * 200 + 'px');
+                    particle.style.setProperty('--dy', -(Math.random() * 150 + 50) + 'px');
+                    particle.style.animationDelay = Math.random() * 0.2 + 's';
+                    document.body.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 1000);
+                }
+            }
+
+            function flipDealerCard(cardEl) {
+                cardEl.classList.add('flipping');
+                setTimeout(() => {
+                    cardEl.classList.remove('card-back');
+                    cardEl.classList.remove('flipping');
+                    const card = dealerHand[0];
+                    const isRed = card.suit === '♥' || card.suit === '♦';
+                    cardEl.classList.add(isRed ? 'red' : 'black');
+                    cardEl.innerHTML = '<span class="rank">'+card.rank+'</span><span class="suit-center">'+card.suit+'</span><span class="suit-bottom">'+card.suit+'</span>';
+                }, 250);
+            }
+
+            // ==================== Фишки ====================
+            els.chipsRow.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    if (gameState !== STATE.BETTING) return;
+                    selectedChip = +chip.dataset.value;
+                    els.chipsRow.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+                    chip.classList.add('selected');
+                    tg?.HapticFeedback?.impactOccurred('light');
+                });
+            });
+
+            els.table.addEventListener('click', (e) => {
+                if (gameState !== STATE.BETTING) return;
+                if (e.target.closest('.chip, .btn, .card, .balance-panel, .btn-profile, .modal-overlay')) return;
+                if (balance >= selectedChip) {
+                    currentBet += selectedChip;
+                    balance -= selectedChip;
+                    updateBal();
+                    updateBet();
+                    saveAll();
+                    tg?.HapticFeedback?.impactOccurred('medium');
+                }
+            });
+
+            function updateBet() {
+                if (currentBet > 0) {
+                    els.betDisplay.textContent = 'Ставка: ' + currentBet;
+                    els.betDisplay.classList.add('active');
+                    els.btnDeal.classList.remove('hidden');
+                } else {
+                    els.betDisplay.textContent = 'Ставка не сделана';
+                    els.betDisplay.classList.remove('active');
+                    els.btnDeal.classList.add('hidden');
+                }
+            }
+
+            // ==================== Состояние кнопок ====================
+            function setState(state) {
+                gameState = state;
+                [els.btnDeal, els.btnHit, els.btnStand, els.btnDouble, els.btnSplit, els.btnNew]
+                    .forEach(b => b.classList.add('hidden'));
+
+                if (state === STATE.BETTING) {
+                    updateBet();
+                } else if (state === STATE.PLAYING) {
+                    els.btnHit.classList.remove('hidden');
+                    els.btnStand.classList.remove('hidden');
+                    if (playerHand.length === 2 && balance >= currentBet)
+                        els.btnDouble.classList.remove('hidden');
+                    if (playerHand.length === 2 && playerHand[0].rank === playerHand[1].rank && balance >= currentBet)
+                        els.btnSplit.classList.remove('hidden');
+                } else if (state === STATE.END) {
+                    els.btnNew.classList.remove('hidden');
+                }
+            }
+
+            // ==================== Колода ====================
+            function freshDeck() {
+                const suits = ['♠','♥','♦','♣'];
+                const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+                let d = [];
+                for (let s of suits) for (let r of ranks) d.push({rank:r, suit:s});
+                return d;
+            }
+            function shuffle(d) {
+                let a = [...d];
+                for (let i = a.length-1; i>0; i--) {
+                    let j = Math.floor(Math.random()*(i+1));
+                    [a[i],a[j]] = [a[j],a[i]];
+                }
+                return a;
+            }
+            function val(c) {
+                if (c.rank === 'A') return 11;
+                if (['K','Q','J'].includes(c.rank)) return 10;
+                return +c.rank;
+            }
+            function handVal(h) {
+                let v=0, a=0;
+                for (let c of h) { v+=val(c); if(c.rank==='A')a++; }
+                while(v>21 && a>0){v-=10;a--;}
+                return v;
+            }
+            function isBJ(h) { return h.length===2 && handVal(h)===21; }
+
+            // ==================== Отрисовка ====================
+            function cardEl(c, faceDown=false) {
+                let div = document.createElement('div');
+                div.className = 'card';
+                if (faceDown) { div.classList.add('card-back'); return div; }
+                let red = c.suit==='♥'||c.suit==='♦';
+                div.classList.add(red?'red':'black');
+                div.innerHTML = '<span class="rank">'+c.rank+'</span><span class="suit-center">'+c.suit+'</span><span class="suit-bottom">'+c.suit+'</span>';
+                return div;
+            }
+
+            function render() {
+                els.dealerCards.innerHTML = '';
+                els.dealerScore.classList.add('hidden');
+                if (dealerHand.length) {
+                    dealerHand.forEach((c,i) => {
+                        els.dealerCards.appendChild(cardEl(c, gameState===STATE.PLAYING && i===0));
+                    });
+                    if (gameState === STATE.END || gameState === STATE.DEALER) {
+                        let v = handVal(dealerHand);
+                        els.dealerScore.textContent = v;
+                        els.dealerScore.classList.remove('hidden');
+                        els.dealerScore.className = 'score-tag ' + (v>21?'bad':'normal');
+                    }
+                }
+                els.playerCards.innerHTML = '';
+                els.playerScore.classList.add('hidden');
+                if (playerHand.length) {
+                    playerHand.forEach(c => els.playerCards.appendChild(cardEl(c)));
+                    let v = handVal(playerHand);
+                    els.playerScore.textContent = v;
+                    els.playerScore.classList.remove('hidden');
+                    els.playerScore.className = 'score-tag ' + (v>21?'bad': v===21?'good':'normal');
+                }
+            }
+
+            // ==================== Игровая логика ====================
+            function deal() {
+                if (currentBet<=0) return;
+                deck = shuffle(freshDeck());
+                playerHand = [deck.pop(), deck.pop()];
+                dealerHand = [deck.pop(), deck.pop()];
+                render();
+                els.result.textContent = '';
+                if (isBJ(playerHand)) {
+                    if (isBJ(dealerHand)) finish('push');
+                    else finish('blackjack');
+                } else {
+                    setState(STATE.PLAYING);
+                }
+                tg?.HapticFeedback?.impactOccurred('heavy');
+            }
+
+            function hit() {
+                if (gameState!==STATE.PLAYING) return;
+                playerHand.push(deck.pop());
+                render();
+                if (handVal(playerHand)>21) finish('bust');
+                else if (handVal(playerHand)===21) stand();
+                else setState(STATE.PLAYING);
+                tg?.HapticFeedback?.impactOccurred('light');
+            }
+
+            function stand() {
+                if (gameState!==STATE.PLAYING) return;
+                setState(STATE.DEALER);
+                render();
+                const dealerCardEls = els.dealerCards.querySelectorAll('.card');
+                if (dealerCardEls.length >= 2 && dealerCardEls[0].classList.contains('card-back')) {
+                    flipDealerCard(dealerCardEls[0]);
+                    setTimeout(() => dealerPlay(), 550);
+                } else {
+                    dealerPlay();
+                }
+                tg?.HapticFeedback?.impactOccurred('medium');
+            }
+
+            function double() {
+                if (gameState!==STATE.PLAYING || playerHand.length!==2 || balance<currentBet) return;
+                balance -= currentBet;
+                currentBet *= 2;
+                updateBal(); updateBet(); saveAll();
+                playerHand.push(deck.pop());
+                render();
+                if (handVal(playerHand)>21) finish('bust');
+                else stand();
+                tg?.HapticFeedback?.impactOccurred('heavy');
+            }
+
+            function split() {
+                if (gameState!==STATE.PLAYING || playerHand.length!==2 || playerHand[0].rank!==playerHand[1].rank || balance<currentBet) return;
+                balance -= currentBet;
+                updateBal(); saveAll();
+                let card2 = playerHand.pop();
+                playerHand.push(deck.pop());
+                let secondHand = [card2, deck.pop()];
+                let v1 = handVal(playerHand);
+                let v2 = handVal(secondHand);
+                render();
+                if (v1>21 && v2>21) finish('bust');
+                else { playerHand = v1>=v2 ? playerHand : secondHand; stand(); }
+                tg?.HapticFeedback?.impactOccurred('heavy');
+            }
+
+            function dealerPlay() {
+                let v = handVal(dealerHand);
+                function go() {
+                    if (v < 17) {
+                        setTimeout(() => {
+                            dealerHand.push(deck.pop());
+                            v = handVal(dealerHand);
+                            render();
+                            if (v < 17) go();
+                            else endDealer(v);
+                        }, 650);
+                    } else { endDealer(v); }
+                }
+                go();
+            }
+
+            function endDealer(dv) {
+                let pv = handVal(playerHand);
+                if (dv > 21) finish('dealer_bust');
+                else if (dv > pv) finish('lose');
+                else if (dv < pv) finish('win');
+                else finish('push');
+            }
+
+            function finish(result) {
+                setState(STATE.END);
+                render();
+                let win = 0, msg = '';
+                switch(result) {
+                    case 'blackjack':   win = Math.floor(currentBet*2.5); msg='Блэкджек! Выплата 3:2'; break;
+                    case 'win':         win = currentBet*2; msg='Победа!'; break;
+                    case 'dealer_bust': win = currentBet*2; msg='Перебор у дилера!'; break;
+                    case 'push':        win = currentBet;   msg='Ничья. Ставка возвращена'; break;
+                    case 'lose':        win = 0;            msg='Дилер выиграл'; break;
+                    case 'bust':        win = 0;            msg='Перебор!'; break;
+                }
+                balance += win;
+                
+                stats.games++;
+                if (result === 'blackjack' || result === 'win' || result === 'dealer_bust') {
+                    stats.wins++;
+                    stats.currentStreak++;
+                    if (stats.currentStreak > stats.bestStreak) stats.bestStreak = stats.currentStreak;
+                    if (win > stats.maxWin) stats.maxWin = win;
+                    spawnFloatingChips(els.table, 15);
+                    if (result === 'blackjack') spawnConfetti();
+                } else if (result === 'lose' || result === 'bust') {
+                    stats.losses++;
+                    stats.currentStreak = 0;
+                } else {
+                    stats.pushes++;
+                    stats.currentStreak = 0;
+                }
+                
+                saveAll();
+                updateBal();
+                els.result.textContent = msg;
+                els.betDisplay.textContent = win>currentBet ? 'Выигрыш: +'+win : win===currentBet ? 'Возврат' : '';
+
+                if (tg?.HapticFeedback) {
+                    if (win>currentBet) tg.HapticFeedback.notificationOccurred('success');
+                    else if (win===0) tg.HapticFeedback.notificationOccurred('error');
+                    else tg.HapticFeedback.notificationOccurred('warning');
+                }
+            }
+
+            function reset() {
+                playerHand=[]; dealerHand=[]; currentBet=0;
+                els.dealerCards.innerHTML=''; els.playerCards.innerHTML='';
+                els.dealerScore.classList.add('hidden'); els.playerScore.classList.add('hidden');
+                els.result.textContent='';
+                updateBet();
+                render();
+                setState(STATE.BETTING);
+            }
+
+            els.btnDeal.addEventListener('click', deal);
+            els.btnHit.addEventListener('click', hit);
+            els.btnStand.addEventListener('click', stand);
+            els.btnDouble.addEventListener('click', double);
+            els.btnSplit.addEventListener('click', split);
+            els.btnNew.addEventListener('click', reset);
+
+            // ==================== Инициализация ====================
+            loadUserProfile();
+            updateBal();
+            updateBet();
+            updateBonusDisplay();
+            if (getTimeUntilBonus() === 0) els.bonusBadge.classList.remove('hidden');
+            setState(STATE.BETTING);
         })();
     </script>
 </body>
