@@ -53,9 +53,113 @@
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
+
+        /* Загрузочный экран */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #0f0f0f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #151515;
+            border-bottom-color: #12ff00;
+            border-radius: 50%;
+            display: inline-block;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-screen-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen px-6 pt-8 pb-32">
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loader mb-4"></div>
+        <div class="text-xs font-bold tracking-[0.3em] green-glow uppercase">Loading</div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="flex flex-col items-center mb-8 animate-item" style="animation-delay: 0.1s;">
+        <h1 class="text-3xl font-bold tracking-[0.2em] green-glow mb-4 uppercase">Verachat</h1>
+        <div class="bg-green-main text-black px-10 py-2 rounded-full font-bold text-sm shadow-lg">
+            SINCE 2021 YEARS
+        </div>
+    </div>
+
+    <!-- MAIN LIST (ВСЕ 4 ПУНКТА) -->
+    <div class="w-full max-w-sm flex flex-col gap-3 mb-6">
+        
+        <!-- Item 1 -->
+        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.2s;">
+            <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
+                <p class="green-glow text-[14px] font-semibold">VeraChat.Main Chat</p>
+                <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | ОСНОВНОЙ ЧАТ</p>
+            </div>
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+                <div class="w-3 h-3 bg-black rounded-full"></div>
+            </a>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.3s;">
+            <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
+                <p class="green-glow text-[14px] font-semibold">VeraChat.Reviews</p>
+                <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | ОТЗЫВЫ</p>
+            </div>
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+                <div class="w-3 h-3 bg-black rounded-full"></div>
+            </a>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.4s;">
+            <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
+                <p class="green-glow text-[14px] font-semibold">VeraChat.Channel</p>
+                <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | КАНАЛ</p>
+            </div>
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+                <div class="w-3 h-3 bg-black rounded-full"></div>
+            </a>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.5s;">
+            <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
+                <p class="green-glow text-[14px] font-semibold">VeraChat.Reserve</p>
+                <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | РЕЗЕРВ</p>
+            </div>
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-screen-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen px-6 pt-8 pb-32">
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loader mb-4"></div>
+        <div class="text-xs font-bold tracking-[0.3em] green-glow uppercase">Loading</div>
+    </div>
 
     <!-- HEADER -->
     <div class="flex flex-col items-center mb-8 animate-item" style="animation-delay: 0.1s;">
@@ -189,6 +293,13 @@
         tg.expand();
         tg.setHeaderColor('#0f0f0f');
         tg.setBackgroundColor('#0f0f0f');
+
+        // Скрытие экрана загрузки после полной загрузки страницы
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('loading-screen-hidden');
+            }, 800);
+        });
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
