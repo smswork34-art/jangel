@@ -37,7 +37,6 @@
             transform: scale(0.92);
         }
 
-        /* Стиль модальных окон */
         .modal-overlay {
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 100;
@@ -54,7 +53,6 @@
             transform: translateY(0);
         }
 
-        /* Загрузочный экран */
         #loading-screen {
             position: fixed;
             inset: 0;
@@ -71,7 +69,6 @@
             visibility: hidden;
         }
 
-        /* Круговая загрузка */
         .loader {
             width: 60px;
             height: 60px;
@@ -102,7 +99,6 @@
             border-radius: 4px;
         }
 
-        /* Уведомление */
         .toast {
             position: fixed;
             bottom: 140px;
@@ -147,10 +143,9 @@
         </div>
     </div>
 
-    <!-- MAIN LIST (ВСЕ 4 ПУНКТА) -->
+    <!-- MAIN LIST -->
     <div class="w-full max-w-sm flex flex-col gap-3 mb-6">
         
-        <!-- Item 1 -->
         <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.2s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="gold-glow text-[14px] font-semibold">Обсуждение</p>
@@ -161,7 +156,6 @@
             </a>
         </div>
 
-        <!-- Item 2 -->
         <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.3s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="gold-glow text-[14px] font-semibold">Чат сервиса</p>
@@ -172,7 +166,6 @@
             </a>
         </div>
 
-        <!-- Item 3 -->
         <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.4s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="gold-glow text-[14px] font-semibold">Резервный сервис</p>
@@ -183,7 +176,6 @@
             </a>
         </div>
 
-        <!-- Item 4 -->
         <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.5s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="gold-glow text-[14px] font-semibold">Азартные игры</p>
@@ -212,15 +204,13 @@
     <!-- ОБЪЯВЛЕНИЯ -->
     <div class="w-full max-w-sm flex flex-col gap-4 mb-6">
         
-        <!-- Заголовок Объявления -->
         <div class="animate-item" style="animation-delay: 0.7s;">
             <h2 class="text-white text-lg font-bold tracking-wide">Объявление</h2>
         </div>
 
         <!-- СТРАНИЦА 1 -->
         <div id="page-1" class="announcements-page active flex-col gap-4">
-            <!-- Объявление 1 -->
-            <div class="animate-item" style="animation-delay: 0.75s;" onclick="openAnnouncementModal('banner.png', 'Название', 'Здесь будет ваше объявыыыыыыыыыыыыыыыыыыыЫВАОРЫФЫРРФРРФРФРРФРФРРФРФРФРФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФФыыыыыыыыыыыление', 'https://t.me/hg')">
+            <div class="animate-item" style="animation-delay: 0.75s;" onclick="openAnnouncementModal('banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="banner.png" alt="Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -231,8 +221,7 @@
                 </div>
             </div>
 
-            <!-- Объявление 2 -->
-            <div class="animate-item" style="animation-delay: 0.8s;" onclick="openAnnouncementModal('1banner.png', 'Название', 'Здесь будет ваше объявление', 'https://t.me/hg')">
+            <div class="animate-item" style="animation-delay: 0.8s;" onclick="openAnnouncementModal('1banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="1banner.png" alt="1Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -246,8 +235,7 @@
 
         <!-- СТРАНИЦА 2 -->
         <div id="page-2" class="announcements-page flex-col gap-4">
-            <!-- Объявление 3 -->
-            <div onclick="openAnnouncementModal('2banner.png', 'Название', 'Здесь будет ваше объявление', 'https://t.me/hg')">
+            <div onclick="openAnnouncementModal('2banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="2banner.png" alt="2Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -258,8 +246,7 @@
                 </div>
             </div>
 
-            <!-- Объявление 4 -->
-            <div onclick="openAnnouncementModal('3banner.png', 'Название', 'Здесь будет ваше объявление', 'https://t.me/hg')">
+            <div onclick="openAnnouncementModal('3banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="3banner.png" alt="3Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -273,8 +260,7 @@
 
         <!-- СТРАНИЦА 3 -->
         <div id="page-3" class="announcements-page flex-col gap-4">
-            <!-- Объявление 5 -->
-            <div onclick="openAnnouncementModal('4banner.png', 'Название', 'Здесь будет ваше объявление', 'https://t.me/hg')">
+            <div onclick="openAnnouncementModal('4banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="4banner.png" alt="4Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -285,8 +271,7 @@
                 </div>
             </div>
 
-            <!-- Объявление 6 -->
-            <div onclick="openAnnouncementModal('5banner.png', 'Название', 'Здесь будет ваше объявление', 'https://t.me/hg')">
+            <div onclick="openAnnouncementModal('5banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="5banner.png" alt="5Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -300,8 +285,7 @@
 
         <!-- СТРАНИЦА 4 -->
         <div id="page-4" class="announcements-page flex-col gap-4">
-            <!-- Объявление 7 -->
-            <div onclick="openAnnouncementModal('6banner.png', 'Название', 'Здесь будет ваше объявление', 'https://t.me/hg')">
+            <div onclick="openAnnouncementModal('6banner.png', 'Название', 'Здесь будет ваше объявление. Максимально подробное описание того, что вы предлагаете. Укажите все детали, условия, цены и контакты для связи. Чем больше информации — тем лучше.')">
                 <div class="bg-[#151515] border border-grey-custom rounded-3xl overflow-hidden tap-scale cursor-pointer">
                     <img src="6banner.png" alt="6Banner" class="w-full h-40 object-cover">
                     <div class="p-4">
@@ -355,13 +339,11 @@
     <div class="fixed bottom-8 w-full flex justify-center px-6 z-50">
         <div class="relative w-full max-w-[340px] h-16 border border-grey-custom rounded-full flex items-center justify-between px-10 bg-[#0f0f0f]/95 backdrop-blur-md shadow-2xl">
             
-            <!-- ГАРАНТЫ -->
             <button onclick="openModal('modal-garant')" class="tap-scale flex flex-col items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 <span class="text-[9px] text-gray-500 mt-1 uppercase font-bold">Гаранты</span>
             </button>
 
-            <!-- ЦЕНТР МЕНЮ -->
             <div class="absolute left-1/2 -translate-x-1/2 -top-6 w-20 h-20 border border-grey-custom bg-[#0f0f0f] rounded-full flex items-center justify-center">
                 <div class="w-12 h-12 rounded-full border border-gray-700 flex items-center justify-center tap-scale">
                     <div class="grid grid-cols-2 gap-1.5">
@@ -373,7 +355,6 @@
                 </div>
             </div>
 
-            <!-- ПОДДЕРЖКА (KITTY) -->
             <button onclick="openModal('modal-kitty')" class="tap-scale flex flex-col items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 <span class="text-[9px] text-gray-500 mt-1 uppercase font-bold">Помощь</span>
@@ -410,12 +391,21 @@
 
     <!-- МОДАЛЬНОЕ ОКНО: ОБЪЯВЛЕНИЕ -->
     <div id="modal-announcement" class="modal-overlay fixed inset-0 bg-black/80 invisible opacity-0 flex items-end justify-center pb-10 px-6" onclick="closeModals()">
-        <div class="modal-content w-full max-w-sm bg-[#151515] border border-grey-custom rounded-[40px] p-8 flex flex-col items-center shadow-2xl max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
-            <div class="w-12 h-1.5 bg-gray-700 rounded-full mb-6"></div>
-            <img id="modal-announcement-banner" src="" alt="Banner" class="w-full h-40 object-cover rounded-2xl mb-4">
-            <h2 id="modal-announcement-title" class="text-2xl font-bold text-white mb-2 tracking-tight gold-glow"></h2>
-            <p id="modal-announcement-desc" class="text-gray-400 text-sm mb-8 text-center font-medium"></p>
-            <a id="modal-announcement-link" href="#" class="w-full bg-gold-main text-black py-4 rounded-2xl font-bold text-center tap-scale">Связаться</a>
+        <div class="modal-content w-full max-w-sm bg-[#151515] border border-grey-custom rounded-[40px] shadow-2xl max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="w-12 h-1.5 bg-gray-700 rounded-full mx-auto mt-4 mb-6"></div>
+            
+            <img id="modal-announcement-banner" src="" alt="Banner" class="w-full h-48 object-cover">
+            
+            <div class="p-6 flex flex-col">
+                <h2 id="modal-announcement-title" class="text-xl font-bold text-white mb-2 tracking-tight gold-glow"></h2>
+                <p class="text-gray-500 text-xs uppercase mb-4">Информацию об объявлении</p>
+                <p id="modal-announcement-desc" class="text-gray-300 text-sm mb-8 leading-relaxed"></p>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeModals()" class="flex-1 bg-[#262626] text-white py-4 rounded-2xl font-bold text-sm tap-scale">ЗАКРЫТЬ</button>
+                    <a id="modal-announcement-link" href="#" class="flex-1 bg-gold-main text-black py-4 rounded-2xl font-bold text-sm text-center tap-scale">Связаться</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -438,11 +428,11 @@
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
         }
 
-        function openAnnouncementModal(bannerSrc, title, description, link) {
+        function openAnnouncementModal(bannerSrc, title, description) {
             document.getElementById('modal-announcement-banner').src = bannerSrc;
             document.getElementById('modal-announcement-title').innerText = title;
             document.getElementById('modal-announcement-desc').innerText = description;
-            document.getElementById('modal-announcement-link').href = link;
+            document.getElementById('modal-announcement-link').href = 'https://t.me/hg';
             openModal('modal-announcement');
         }
 
@@ -452,14 +442,12 @@
             });
         });
 
-        // Загрузочный экран
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
             }, 1500);
         });
 
-        // Пагинация объявлений
         let currentPage = 1;
         const totalPages = 4;
 
@@ -467,17 +455,12 @@
             const newPage = currentPage + direction;
             if (newPage < 1 || newPage > totalPages) return;
 
-            // Скрыть текущую страницу
             document.getElementById(`page-${currentPage}`).classList.remove('active');
-            
-            // Показать новую страницу
             document.getElementById(`page-${newPage}`).classList.add('active');
             
-            // Обновить индикаторы
             document.querySelectorAll('.page-dot').forEach(dot => dot.classList.remove('active'));
             document.querySelector(`.page-dot[data-page="${newPage}"]`).classList.add('active');
             
-            // Обновить кнопки
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             
@@ -498,12 +481,9 @@
             }
             
             currentPage = newPage;
-            
-            // Прокрутка к объявлениям
             document.querySelector('.announcements-page.active').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Уведомление
         function showToast() {
             const toast = document.getElementById('toast');
             toast.classList.add('show');
