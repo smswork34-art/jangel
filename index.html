@@ -13,101 +13,115 @@
             background-color: #0f0f0f;
             color: white;
             -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .green-glow { color: #12ff00; }
         .bg-green-main { background-color: #12ff00; }
         .border-grey-custom { border-color: #262626; }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Каскадная анимация появления */
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateX(-20px); }
+            100% { opacity: 1; transform: translateX(0); }
         }
 
-        .animate-item {
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            70% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-list-item {
             opacity: 0;
-            animation: fadeInUp 0.5s ease forwards;
+            animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        .tap-scale {
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Пульсация центрального меню */
+        @keyframes menuPulse {
+            0% { box-shadow: 0 0 0 0 rgba(18, 255, 0, 0.1); transform: scale(1); }
+            50% { box-shadow: 0 0 20px 5px rgba(18, 255, 0, 0.05); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(18, 255, 0, 0.1); transform: scale(1); }
         }
-        .tap-scale:active {
-            transform: scale(0.92);
+        .menu-glow {
+            animation: menuPulse 3s infinite ease-in-out;
         }
 
-        /* Стиль модальных окон */
+        /* Улучшенные модалки */
         .modal-overlay {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: all 0.3s ease;
             z-index: 100;
         }
         .modal-content {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform: translateY(100%);
         }
         .modal-overlay.active {
             opacity: 1;
             visibility: visible;
+            backdrop-filter: blur(4px);
         }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
+        }
+
+        .tap-scale {
+            transition: transform 0.15s ease;
+        }
+        .tap-scale:active {
+            transform: scale(0.9);
         }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen px-6 pt-8 pb-32">
 
     <!-- HEADER -->
-    <div class="flex flex-col items-center mb-8 animate-item" style="animation-delay: 0.1s;">
+    <div class="flex flex-col items-center mb-8 animate-list-item" style="animation-delay: 0.1s;">
         <h1 class="text-3xl font-bold tracking-[0.2em] green-glow mb-4 uppercase">Verachat</h1>
         <div class="bg-green-main text-black px-10 py-2 rounded-full font-bold text-sm shadow-lg">
             SINCE 2021 YEARS
         </div>
     </div>
 
-    <!-- MAIN LIST (ВСЕ 4 ПУНКТА) -->
+    <!-- MAIN LIST -->
     <div class="w-full max-w-sm flex flex-col gap-3 mb-6">
         
-        <!-- Item 1 -->
-        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.2s;">
+        <div class="flex items-center gap-3 animate-list-item" style="animation-delay: 0.2s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="green-glow text-[14px] font-semibold">VeraChat.Main Chat</p>
                 <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | ОСНОВНОЙ ЧАТ</p>
             </div>
-            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale shadow-[0_5px_15px_rgba(18,255,0,0.15)]">
                 <div class="w-3 h-3 bg-black rounded-full"></div>
             </a>
         </div>
 
-        <!-- Item 2 -->
-        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.3s;">
+        <div class="flex items-center gap-3 animate-list-item" style="animation-delay: 0.3s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="green-glow text-[14px] font-semibold">VeraChat.Reviews</p>
                 <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | ОТЗЫВЫ</p>
             </div>
-            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale shadow-[0_5px_15px_rgba(18,255,0,0.15)]">
                 <div class="w-3 h-3 bg-black rounded-full"></div>
             </a>
         </div>
 
-        <!-- Item 3 -->
-        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.4s;">
+        <div class="flex items-center gap-3 animate-list-item" style="animation-delay: 0.4s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="green-glow text-[14px] font-semibold">VeraChat.Channel</p>
                 <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | КАНАЛ</p>
             </div>
-            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale shadow-[0_5px_15px_rgba(18,255,0,0.15)]">
                 <div class="w-3 h-3 bg-black rounded-full"></div>
             </a>
         </div>
 
-        <!-- Item 4 -->
-        <div class="flex items-center gap-3 animate-item" style="animation-delay: 0.5s;">
+        <div class="flex items-center gap-3 animate-list-item" style="animation-delay: 0.5s;">
             <div class="flex-grow border border-grey-custom rounded-2xl p-4 h-[70px] flex flex-col justify-center bg-[#151515]/30">
                 <p class="green-glow text-[14px] font-semibold">VeraChat.Reserve</p>
                 <p class="text-gray-400 text-[11px] uppercase tracking-tight">ВЕРАЧАТ | РЕЗЕРВ</p>
             </div>
-            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale">
+            <a href="https://t.me/hg" class="w-[70px] h-[70px] bg-green-main rounded-[22px] flex items-center justify-center shrink-0 tap-scale shadow-[0_5px_15px_rgba(18,255,0,0.15)]">
                 <div class="w-3 h-3 bg-black rounded-full"></div>
             </a>
         </div>
@@ -115,7 +129,7 @@
     </div>
 
     <!-- USER INFO -->
-    <div class="w-full max-w-sm animate-item mb-4" style="animation-delay: 0.6s;">
+    <div class="w-full max-w-sm animate-list-item mb-4" style="animation-delay: 0.6s;">
         <div class="bg-[#151515] border border-grey-custom rounded-3xl p-5 flex items-center justify-between">
             <div>
                 <p class="text-gray-500 text-xs uppercase mb-1">Аккаунт</p>
@@ -128,17 +142,15 @@
     </div>
 
     <!-- BOTTOM NAVIGATION -->
-    <div class="fixed bottom-8 w-full flex justify-center px-6 z-50">
-        <div class="relative w-full max-w-[340px] h-16 border border-grey-custom rounded-full flex items-center justify-between px-10 bg-[#0f0f0f]/95 backdrop-blur-md shadow-2xl">
+    <div class="fixed bottom-8 w-full flex justify-center px-6 z-50 animate-list-item" style="animation-delay: 0.7s;">
+        <div class="relative w-full max-w-[340px] h-16 border border-grey-custom rounded-full flex items-center justify-between px-10 bg-[#0f0f0f]/95 backdrop-blur-md">
             
-            <!-- ГАРАНТЫ -->
             <button onclick="openModal('modal-garant')" class="tap-scale flex flex-col items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 <span class="text-[9px] text-gray-500 mt-1 uppercase font-bold">Гаранты</span>
             </button>
 
-            <!-- ЦЕНТР МЕНЮ -->
-            <div class="absolute left-1/2 -translate-x-1/2 -top-6 w-20 h-20 border border-grey-custom bg-[#0f0f0f] rounded-full flex items-center justify-center">
+            <div class="absolute left-1/2 -translate-x-1/2 -top-6 w-20 h-20 border border-grey-custom bg-[#0f0f0f] rounded-full flex items-center justify-center menu-glow">
                 <div class="w-12 h-12 rounded-full border border-gray-700 flex items-center justify-center tap-scale">
                     <div class="grid grid-cols-2 gap-1.5">
                         <div class="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
@@ -149,7 +161,6 @@
                 </div>
             </div>
 
-            <!-- ПОДДЕРЖКА (KITTY) -->
             <button onclick="openModal('modal-kitty')" class="tap-scale flex flex-col items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 <span class="text-[9px] text-gray-500 mt-1 uppercase font-bold">Помощь</span>
@@ -158,27 +169,26 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: ГАРАНТ -->
+    <!-- MODALS -->
     <div id="modal-garant" class="modal-overlay fixed inset-0 bg-black/80 invisible opacity-0 flex items-end justify-center pb-10 px-6" onclick="closeModals()">
         <div class="modal-content w-full max-w-sm bg-[#151515] border border-grey-custom rounded-[40px] p-8 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
             <div class="w-12 h-1.5 bg-gray-700 rounded-full mb-6"></div>
             <div class="w-24 h-24 rounded-full border-2 border-green-main p-1 mb-4 shadow-[0_0_20px_rgba(18,255,0,0.2)]">
                 <img src="AV.png" alt="AV" class="w-full h-full rounded-full object-cover">
             </div>
-            <h2 class="text-2xl font-bold text-white mb-1 tracking-tight">AV Гарант</h2>
+            <h2 class="text-2xl font-bold text-white mb-1">AV Гарант</h2>
             <p class="text-gray-400 text-sm mb-8 text-center font-medium">Гарант сделок в USDT</p>
-            <a href="http://t.me/av_2025x" class="w-full bg-green-main text-black py-4 rounded-2xl font-bold text-center tap-scale">СВЯЗАТЬСЯ С ГАРАНТОМ</a>
+            <a href="http://t.me/av_2025x" class="w-full bg-green-main text-black py-4 rounded-2xl font-bold text-center tap-scale">СВЯЗАТЬСЯ</a>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: KITTY (ПОМОЩЬ) -->
     <div id="modal-kitty" class="modal-overlay fixed inset-0 bg-black/80 invisible opacity-0 flex items-end justify-center pb-10 px-6" onclick="closeModals()">
         <div class="modal-content w-full max-w-sm bg-[#151515] border border-grey-custom rounded-[40px] p-8 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
             <div class="w-12 h-1.5 bg-gray-700 rounded-full mb-6"></div>
             <div class="w-24 h-24 rounded-full border-2 border-green-main p-1 mb-4 shadow-[0_0_20px_rgba(18,255,0,0.2)]">
                 <img src="kitty.png" alt="Kitty" class="w-full h-full rounded-full object-cover">
             </div>
-            <h2 class="text-2xl font-bold text-white mb-1 tracking-tight">Kitty</h2>
+            <h2 class="text-2xl font-bold text-white mb-1">Kitty</h2>
             <p class="text-gray-400 text-sm mb-8 text-center font-medium">Случилась проблема? <br> Обращайтесь к ней.</p>
             <a href="https://t.me/hg" class="w-full bg-green-main text-black py-4 rounded-2xl font-bold text-center tap-scale">НАПИСАТЬ KITTY</a>
         </div>
@@ -205,7 +215,7 @@
 
         document.querySelectorAll('.tap-scale').forEach(button => {
             button.addEventListener('click', () => {
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             });
         });
     </script>
