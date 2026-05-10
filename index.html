@@ -195,7 +195,8 @@
                 <p class="text-gray-500 text-xs uppercase mb-1">ПРОФИЛЬ</p>
                 <h3 id="user-name" class="text-lg font-bold text-white tracking-wide">Guest</h3>
             </div>
-            <div class="w-12 h-12 bg-gold-main/10 rounded-full border border-gold-main/30 flex items-center justify-center">
+            <img id="user-avatar" src="" alt="Avatar" class="w-12 h-12 rounded-full border border-gold-main/30 object-cover hidden">
+            <div id="user-avatar-placeholder" class="w-12 h-12 bg-gold-main/10 rounded-full border border-gold-main/30 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 gold-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             </div>
         </div>
@@ -416,7 +417,16 @@
         tg.setBackgroundColor('#0f0f0f');
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = user.first_name;
+            
+            // Загрузка аватарки пользователя
+            if (user.photo_url) {
+                const avatar = document.getElementById('user-avatar');
+                avatar.src = user.photo_url;
+                avatar.classList.remove('hidden');
+                document.getElementById('user-avatar-placeholder').classList.add('hidden');
+            }
         }
 
         function openModal(id) {
