@@ -53,9 +53,39 @@
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
+
+        /* Загрузочный экран */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #0f0f0f;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .loading-text {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen px-6 pt-8 pb-32">
+
+    <!-- ЗАГРУЗОЧНЫЙ ЭКРАН -->
+    <div id="loading-screen">
+        <h1 class="text-3xl font-bold tracking-[0.2em] green-glow mb-4 uppercase">Verachat</h1>
+        <p class="text-gray-400 text-sm loading-text">Загрузка...</p>
+    </div>
 
     <!-- HEADER -->
     <div class="flex flex-col items-center mb-8 animate-item" style="animation-delay: 0.1s;">
@@ -207,6 +237,13 @@
             button.addEventListener('click', () => {
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             });
+        });
+
+        // Загрузочный экран
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+            }, 1500);
         });
     </script>
 </body>
